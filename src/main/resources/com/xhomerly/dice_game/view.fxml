@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
+    <right>
+        <VBox alignment="TOP_CENTER" prefHeight="767.0" prefWidth="392.0" BorderPane.alignment="CENTER">
+            <children>
+                <VBox prefHeight="461.0" prefWidth="392.0">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label prefHeight="54.0" prefWidth="87.0" text="Pořadí" textFill="WHITE">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="59.0" prefWidth="126.0" text="Player 1" textFill="WHITE">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="54.0" prefWidth="167.0" text="Score: 000" textFill="WHITE">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label prefHeight="72.0" prefWidth="354.0" style="-fx-wrap-text: true;" text="budto to delat v HBoxu nebo v tom table. prehazovat poradi pomoci animace a bude to pekne" textFill="WHITE" />
+                  <TableView prefHeight="214.0" prefWidth="392.0" />
+               </children></VBox>
+            <StackPane prefHeight="391.0" prefWidth="392.0">
+               <children>
+                      <Button mnemonicParsing="false" onMouseClicked="#roll" text="ROLL" />
+               </children>
+            </StackPane>
+            </children>
+        </VBox>
+    </right>
+    <bottom>
+        <HBox prefHeight="126.0" prefWidth="1400.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label prefHeight="39.0" prefWidth="216.0" text="Click on cube to lock it" textFill="WHITE">
+               <font>
+                  <Font name="Verdana" size="18.0" />
+               </font></Label>
+            </children>
+        </HBox>
+    </bottom>
+    <center>
+        <GridPane prefHeight="714.0" prefWidth="880.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="511.0" minWidth="0.0" prefWidth="58.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="544.0" minWidth="10.0" prefWidth="300.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.0" minWidth="10.0" prefWidth="300.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="313.0" minWidth="10.0" prefWidth="300.0" />
+            </columnConstraints>
+            <rowConstraints>
+            <RowConstraints maxHeight="417.0" minHeight="0.0" prefHeight="56.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="516.0" minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="415.0" minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+         <children>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fx:id="dice1" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dice1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="lock1" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
+                     <image>
+                        <Image url="@lock.png" />
+                     </image>
+                     <StackPane.margin>
+                        <Insets right="50.0" top="50.0" />
+                     </StackPane.margin>
+                  </ImageView>
+               </children>
+            </StackPane>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fx:id="dice2" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dice2.png" />
+                     </image>
+                  </ImageView>
+                   <ImageView fx:id="lock2" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
+                       <image>
+                           <Image url="@lock.png" />
+                       </image>
+                       <StackPane.margin>
+                           <Insets right="50.0" top="50.0" />
+                       </StackPane.margin>
+                   </ImageView>
+               </children>
+            </StackPane>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fx:id="dice3" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dice3.png" />
+                     </image>
+                  </ImageView>
+                   <ImageView fx:id="lock3" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
+                       <image>
+                           <Image url="@lock.png" />
+                       </image>
+                       <StackPane.margin>
+                           <Insets right="50.0" top="50.0" />
+                       </StackPane.margin>
+                   </ImageView>
+               </children>
+            </StackPane>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <ImageView fx:id="dice4" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dice4.png" />
+                     </image>
+                  </ImageView>
+                   <ImageView fx:id="lock4" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
+                       <image>
+                           <Image url="@lock.png" />
+                       </image>
+                       <StackPane.margin>
+                           <Insets right="50.0" top="50.0" />
+                       </StackPane.margin>
+                   </ImageView>
+               </children>
+            </StackPane>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <children>
+                  <ImageView fx:id="dice5" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dice5.png" />
+                     </image>
+                  </ImageView>
+                   <ImageView fx:id="lock5" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
+                       <image>
+                           <Image url="@lock.png" />
+                       </image>
+                       <StackPane.margin>
+                           <Insets right="50.0" top="50.0" />
+                       </StackPane.margin>
+                   </ImageView>
+               </children>
+            </StackPane>
+            <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+               <children>
+                  <ImageView fx:id="dice6" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@dice6.png" />
+                     </image>
+                  </ImageView>
+                   <ImageView fx:id="lock6" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
+                       <image>
+                           <Image url="@lock.png" />
+                       </image>
+                       <StackPane.margin>
+                           <Insets right="50.0" top="50.0" />
+                       </StackPane.margin>
+                   </ImageView>
+               </children>
+            </StackPane>
+         </children>
+        </GridPane>
+    </center>
+</BorderPane>
