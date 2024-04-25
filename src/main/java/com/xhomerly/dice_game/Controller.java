@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.transform.Rotate;
@@ -103,9 +104,16 @@ public class Controller {
                 }
             });
         }
+        System.out.print("rolled ");
         for (byte i = 0; i < values.length; i++) {
             System.out.print(values[i]);
         }
         System.out.println(" ");
+    }
+
+    public void lock(MouseEvent event) {
+        Object userData = ((Node) event.getSource()).getUserData();
+        int diceNum = Integer.parseInt((String) userData);
+        System.out.println(diceNum);
     }
 }

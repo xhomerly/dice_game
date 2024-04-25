@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
     <right>
         <VBox alignment="TOP_CENTER" prefHeight="774.0" prefWidth="415.0" BorderPane.alignment="CENTER">
             <children>
@@ -77,7 +77,7 @@
          <children>
             <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <ImageView fx:id="dice1" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="dice1" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="1">
                      <image>
                         <Image url="@dice1.png" />
                      </image>
@@ -94,7 +94,7 @@
             </StackPane>
             <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
-                  <ImageView fx:id="dice2" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="dice2" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="2">
                      <image>
                         <Image url="@dice2.png" />
                      </image>
@@ -111,7 +111,7 @@
             </StackPane>
             <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <children>
-                  <ImageView fx:id="dice3" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="dice3" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="3">
                      <image>
                         <Image url="@dice3.png" />
                      </image>
@@ -128,7 +128,7 @@
             </StackPane>
             <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <ImageView fx:id="dice4" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="dice4" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="4">
                      <image>
                         <Image url="@dice4.png" />
                      </image>
@@ -145,7 +145,7 @@
             </StackPane>
             <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <children>
-                  <ImageView fx:id="dice5" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="dice5" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="5">
                      <image>
                         <Image url="@dice5.png" />
                      </image>
@@ -162,7 +162,7 @@
             </StackPane>
             <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <children>
-                  <ImageView fx:id="dice6" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="dice6" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="6">
                      <image>
                         <Image url="@dice6.png" />
                      </image>
