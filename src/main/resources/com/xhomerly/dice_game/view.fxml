@@ -15,11 +15,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
     <right>
-        <VBox alignment="TOP_CENTER" prefHeight="767.0" prefWidth="392.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" prefHeight="774.0" prefWidth="415.0" BorderPane.alignment="CENTER">
             <children>
-                <VBox prefHeight="461.0" prefWidth="392.0">
+                <VBox prefHeight="442.0" prefWidth="343.0">
                <children>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
@@ -43,7 +43,7 @@
                   <Label prefHeight="72.0" prefWidth="354.0" style="-fx-wrap-text: true;" text="budto to delat v HBoxu nebo v tom table. prehazovat poradi pomoci animace a bude to pekne" textFill="WHITE" />
                   <TableView prefHeight="214.0" prefWidth="392.0" />
                </children></VBox>
-            <StackPane prefHeight="391.0" prefWidth="392.0">
+            <StackPane prefHeight="352.0" prefWidth="427.0">
                <children>
                       <Button mnemonicParsing="false" onMouseClicked="#roll" text="ROLL" />
                </children>
@@ -62,15 +62,15 @@
         </HBox>
     </bottom>
     <center>
-        <GridPane prefHeight="714.0" prefWidth="880.0" BorderPane.alignment="CENTER">
+        <GridPane prefHeight="774.0" prefWidth="1017.0" BorderPane.alignment="CENTER">
             <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="511.0" minWidth="0.0" prefWidth="58.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="544.0" minWidth="10.0" prefWidth="300.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.0" minWidth="10.0" prefWidth="300.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="313.0" minWidth="10.0" prefWidth="300.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="0.0" prefWidth="50.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="10.0" prefWidth="300.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="10.0" prefWidth="300.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="10.0" prefWidth="300.0" />
             </columnConstraints>
             <rowConstraints>
-            <RowConstraints maxHeight="417.0" minHeight="0.0" prefHeight="56.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="516.0" minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="415.0" minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
             </rowConstraints>

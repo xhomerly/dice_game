@@ -3,6 +3,7 @@ package com.xhomerly.dice_game;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
@@ -16,7 +17,6 @@ public class Controller {
     private ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
 
     private final Image[] dicesImg = {
-            new Image(getClass().getResourceAsStream("dice1.png")),
             new Image(getClass().getResourceAsStream("dice1.png")),
             new Image(getClass().getResourceAsStream("dice2.png")),
             new Image(getClass().getResourceAsStream("dice3.png")),
@@ -60,39 +60,52 @@ public class Controller {
             transitions[i].setCycleCount((int) (Math.random() * 4 + 1));
             transitions[i].setDuration(Duration.millis(500));
             transitions[i].setAutoReverse(true);
+            ImageView dice = null;
             switch (i) {
-                case 0: transitions[i].setNode(dice1);
+                case 0:
+                    transitions[i].setNode(dice1);
+                    dice = dice1;
                     break;
                 case 1: transitions[i].setNode(dice2);
+                    dice = dice2;
                     break;
                 case 2: transitions[i].setNode(dice3);
+                    dice = dice3;
                     break;
                 case 3: transitions[i].setNode(dice4);
+                    dice = dice4;
                     break;
                 case 4: transitions[i].setNode(dice5);
+                    dice = dice5;
                     break;
                 case 5: transitions[i].setNode(dice6);
+                    dice = dice6;
                     break;
             }
             transitions[i].setInterpolator(Interpolator.EASE_OUT);
             transitions[i].play();
-            byte tmp = i;
+            byte tmp = values[i];
+            ImageView finalDice = dice;
             transitions[i].setOnFinished(event -> {
                 switch (tmp) {
-                    case 0: dice1.setImage(dicesImg[tmp]);
+                    case 1: finalDice.setImage(dicesImg[0]);
                         break;
-                    case 1: dice2.setImage(dicesImg[tmp]);
+                    case 2: finalDice.setImage(dicesImg[1]);
                         break;
-                    case 2: dice3.setImage(dicesImg[tmp]);
+                    case 3: finalDice.setImage(dicesImg[2]);
                         break;
-                    case 3: dice4.setImage(dicesImg[tmp]);
+                    case 4: finalDice.setImage(dicesImg[3]);
                         break;
-                    case 4: dice5.setImage(dicesImg[tmp]);
+                    case 5: finalDice.setImage(dicesImg[4]);
                         break;
-                    case 5: dice6.setImage(dicesImg[tmp]);
+                    case 6: finalDice.setImage(dicesImg[5]);
                         break;
                 }
             });
         }
+        for (byte i = 0; i < values.length; i++) {
+            System.out.print(values[i]);
+        }
+        System.out.println(" ");
     }
 }
