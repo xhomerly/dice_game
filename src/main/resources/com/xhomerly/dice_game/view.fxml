@@ -15,37 +15,71 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="900.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.xhomerly.dice_game.Controller">
    <children>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;">
+      <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" style="-fx-background-color: #333;">
           <right>
-              <VBox alignment="TOP_CENTER" prefHeight="774.0" prefWidth="415.0" BorderPane.alignment="CENTER">
+              <VBox alignment="TOP_CENTER" prefHeight="774.0" prefWidth="370.0" BorderPane.alignment="CENTER">
                   <children>
-                      <VBox prefHeight="442.0" prefWidth="343.0">
+                      <VBox prefHeight="432.0" prefWidth="401.0" style="-fx-border-color: #444; -fx-border-width: 3px;">
                      <children>
-                        <HBox prefHeight="100.0" prefWidth="200.0">
+                        <HBox alignment="CENTER" prefHeight="50.0" prefWidth="415.0" style="-fx-background-color: #444;">
                            <children>
-                              <Label prefHeight="54.0" prefWidth="87.0" text="Pořadí" textFill="WHITE">
-                                 <font>
-                                    <Font name="Arial" size="20.0" />
-                                 </font>
-                              </Label>
-                              <Label prefHeight="59.0" prefWidth="126.0" text="Player 1" textFill="WHITE">
-                                 <font>
-                                    <Font name="Arial" size="20.0" />
-                                 </font>
-                              </Label>
-                              <Label prefHeight="54.0" prefWidth="167.0" text="Score: 000" textFill="WHITE">
+                              <Label alignment="CENTER" prefHeight="50.0" text="Leaderboards" textFill="WHITE">
                                  <font>
                                     <Font name="Arial" size="20.0" />
                                  </font>
                               </Label>
                            </children>
                         </HBox>
-                        <Label prefHeight="72.0" prefWidth="354.0" style="-fx-wrap-text: true;" text="HBoxy prehazovat poradi pomoci animace a bude to pekne" textFill="WHITE">
-                           <font>
-                              <Font name="Arial" size="14.0" />
-                           </font></Label>
+                        <HBox prefHeight="50.0" prefWidth="415.0">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="#1" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="126.0" text="Player 1" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="100.0" text="score:" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="111.0" text="000" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="50.0" prefWidth="415.0">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="#1" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="126.0" text="Player 1" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="100.0" text="score:" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="111.0" text="000" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial" size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                   <StackPane prefHeight="352.0" prefWidth="427.0">
@@ -88,7 +122,7 @@
                      <children>
                         <ImageView fx:id="dice1" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="0">
                            <image>
-                              <Image url="@dice1.png" />
+                              <Image url="@dice0.png" />
                            </image>
                         </ImageView>
                         <ImageView fx:id="lock1" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
@@ -105,7 +139,7 @@
                      <children>
                         <ImageView fx:id="dice2" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="1">
                            <image>
-                              <Image url="@dice2.png" />
+                              <Image url="@dice0.png" />
                            </image>
                         </ImageView>
                          <ImageView fx:id="lock2" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
@@ -122,7 +156,7 @@
                      <children>
                         <ImageView fx:id="dice3" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="2">
                            <image>
-                              <Image url="@dice3.png" />
+                              <Image url="@dice0.png" />
                            </image>
                         </ImageView>
                          <ImageView fx:id="lock3" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
@@ -139,7 +173,7 @@
                      <children>
                         <ImageView fx:id="dice4" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="3">
                            <image>
-                              <Image url="@dice4.png" />
+                              <Image url="@dice0.png" />
                            </image>
                         </ImageView>
                          <ImageView fx:id="lock4" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
@@ -156,7 +190,7 @@
                      <children>
                         <ImageView fx:id="dice5" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="4">
                            <image>
-                              <Image url="@dice5.png" />
+                              <Image url="@dice0.png" />
                            </image>
                         </ImageView>
                          <ImageView fx:id="lock5" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
@@ -173,7 +207,7 @@
                      <children>
                         <ImageView fx:id="dice6" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#lock" pickOnBounds="true" preserveRatio="true" userData="5">
                            <image>
-                              <Image url="@dice6.png" />
+                              <Image url="@dice0.png" />
                            </image>
                         </ImageView>
                          <ImageView fx:id="lock6" fitHeight="78.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true" visible="false" StackPane.alignment="TOP_RIGHT">
@@ -190,7 +224,7 @@
               </GridPane>
           </center>
       </BorderPane>
-      <VBox fx:id="startBox" alignment="TOP_CENTER" fillWidth="false" style="-fx-background-color: #555; -fx-background-radius: 30px;" StackPane.alignment="CENTER">
+      <VBox fx:id="startBox" alignment="TOP_CENTER" fillWidth="false" style="-fx-background-color: #555; -fx-background-radius: 30px;" visible="false" StackPane.alignment="CENTER">
          <StackPane.margin>
             <Insets bottom="100.0" left="100.0" right="100.0" top="100.0" />
          </StackPane.margin>

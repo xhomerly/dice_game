@@ -9,7 +9,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -23,6 +25,18 @@ public class Controller {
     private ImageView dice1, dice2, dice3, dice4, dice5, dice6;
     private ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
 
+    @FXML
+    private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
+    private ImageView[] locks = {lock1, lock2, lock3, lock4, lock5, lock6};
+
+    @FXML private TextField playerInput;
+    @FXML private Label errorLabel;
+    @FXML private VBox startBox;
+    @FXML private BorderPane borderPane;
+
+    private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
+    private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
+
     private final Image[] dicesImg = {
             new Image(getClass().getResourceAsStream("dice1.png")),
             new Image(getClass().getResourceAsStream("dice2.png")),
@@ -32,27 +46,19 @@ public class Controller {
             new Image(getClass().getResourceAsStream("dice6.png"))
     };
 
-    @FXML
-    private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
-    private ImageView[] locks = {lock1, lock2, lock3, lock4, lock5, lock6};
+    private final Media[] rolls = {
+            new Media(getClass().getResource("roll1.mp3").toString()),
+            new Media(getClass().getResource("roll2.mp3").toString()),
+            new Media(getClass().getResource("roll3.mp3").toString()),
+            new Media(getClass().getResource("roll4.mp3").toString()),
+            new Media(getClass().getResource("roll5.mp3").toString())
+    };
 
-    private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
-    private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
+    private byte numOfPlayers;
 
     private byte values[];
 
     private boolean isLocked[] = {false, false, false, false, false, false};
-
-    @FXML
-    private TextField playerInput;
-
-    @FXML
-    private Label errorLabel;
-
-    @FXML
-    private VBox startBox;
-
-    private byte numOfPlayers;
 
     public void initialize() {
         values = new byte[dices.length];
@@ -63,9 +69,17 @@ public class Controller {
         for (byte i = 0; i < transitions.length; i++) {
             transitions[i] = new RotateTransition();
         }
+        //todo:
+        System.out.println("Toto je porad jen debug faze, potom pores tohle v initialize");
+        startBox.setVisible(true);
+        borderPane.setVisible(false);
+        //todo: tohle potom smaž až budeš mít nickname settings
+        playerInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) gameStart();
+        });
     }
 
-    public void gameStart() {
+    public void gameStart() { //todo:
         playerInput.setTextFormatter(new TextFormatter<>(getNumericFilter()));
         String enteredValue = playerInput.getText();
         try {
@@ -73,6 +87,7 @@ public class Controller {
             if (numOfPlayers >= 2 && numOfPlayers <= 127) {
                 errorLabel.setText("");
                 startBox.setVisible(false);
+                borderPane.setVisible(true);
             } else {
                 errorLabel.setText("The number is invalid. Set something between 2 - 127");
             }
@@ -91,8 +106,10 @@ public class Controller {
     }
 
     public void roll() {
-//        MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass().getResource("heheheha.mp3").toString()));
-//        mediaPlayer.play();
+        //random roll sound
+        byte random = (byte) (Math.round(Math.random() * 4));
+        MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
+        mediaPlayer.play();
         for (byte i = 0; i < dices.length; i++) {
             values[i] = (byte) (Math.round(Math.random() * 5) + 1);
             transitions[i] = new RotateTransition();

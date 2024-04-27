@@ -13,7 +13,9 @@ public class Application extends javafx.application.Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Dice Game");
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("dice0.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("dice.png")));
+        stage.setMinWidth(1430);
+        stage.setMinHeight(930);
         stage.setScene(scene);
         stage.show();
     }
