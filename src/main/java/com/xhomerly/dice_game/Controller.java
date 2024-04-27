@@ -3,8 +3,10 @@ package com.xhomerly.dice_game;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
@@ -12,9 +14,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
@@ -33,6 +38,8 @@ public class Controller {
     @FXML private Label errorLabel;
     @FXML private VBox startBox;
     @FXML private BorderPane borderPane;
+    @FXML private ScrollPane leaderboardsWrapper;
+    @FXML private VBox leaderboards;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -50,8 +57,7 @@ public class Controller {
             new Media(getClass().getResource("roll1.mp3").toString()),
             new Media(getClass().getResource("roll2.mp3").toString()),
             new Media(getClass().getResource("roll3.mp3").toString()),
-            new Media(getClass().getResource("roll4.mp3").toString()),
-            new Media(getClass().getResource("roll5.mp3").toString())
+            new Media(getClass().getResource("roll4.mp3").toString())
     };
 
     private byte numOfPlayers;
@@ -84,15 +90,48 @@ public class Controller {
         String enteredValue = playerInput.getText();
         try {
             numOfPlayers = Byte.parseByte(enteredValue);
-            if (numOfPlayers >= 2 && numOfPlayers <= 127) {
+            if (numOfPlayers >= 2 && numOfPlayers <= 99) {
                 errorLabel.setText("");
                 startBox.setVisible(false);
                 borderPane.setVisible(true);
+                for (byte i = 1; i <= numOfPlayers; i++) {
+                    Font font = new Font("Arial", 20);
+
+                    Label positon = new Label("#" + i);
+                    positon.setPrefSize(50,50);
+                    positon.setAlignment(Pos.CENTER);
+                    positon.setFont(font);
+                    positon.setTextFill(Color.WHITE);
+
+                    Label name = new Label("Player " + i);
+                    name.setPrefSize(126,50);
+                    name.setAlignment(Pos.CENTER);
+                    name.setFont(font);
+                    name.setTextFill(Color.WHITE);
+
+                    Label scoreText = new Label("score:");
+                    scoreText.setPrefSize(100,50);
+                    scoreText.setAlignment(Pos.CENTER_RIGHT);
+                    scoreText.setFont(font);
+                    scoreText.setTextFill(Color.WHITE);
+
+                    Label score = new Label("000");
+                    score.setPrefSize(111,50);
+                    score.setAlignment(Pos.CENTER);
+                    score.setFont(font);
+                    score.setTextFill(Color.WHITE);
+
+                    HBox player = new HBox(positon, name, scoreText, score);
+                    player.setPrefSize(415,50);
+
+                    leaderboards.getChildren().add(player);
+                }
+                leaderboardsWrapper.setContent(leaderboards);
             } else {
-                errorLabel.setText("The number is invalid. Set something between 2 - 127");
+                errorLabel.setText("The number is invalid. Set something between 2 - 99");
             }
         } catch (NumberFormatException e) {
-            errorLabel.setText("The number is not a valid byte value. Set something between 2 - 127");
+            errorLabel.setText("The number is not a valid byte value. Set something between 2 - 99");
         }
     }
 
@@ -106,8 +145,7 @@ public class Controller {
     }
 
     public void roll() {
-        //random roll sound
-        byte random = (byte) (Math.round(Math.random() * 4));
+        byte random = (byte) (Math.round(Math.random() * 3));
         MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
         mediaPlayer.play();
         for (byte i = 0; i < dices.length; i++) {
