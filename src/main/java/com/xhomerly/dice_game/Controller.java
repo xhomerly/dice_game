@@ -28,7 +28,7 @@ import java.util.function.UnaryOperator;
 public class Controller {
     @FXML
     private ImageView dice1, dice2, dice3, dice4, dice5, dice6;
-    private ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
+    private final ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
 
     @FXML
     private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
@@ -40,6 +40,7 @@ public class Controller {
     @FXML private BorderPane borderPane;
     @FXML private ScrollPane leaderboardsWrapper;
     @FXML private VBox leaderboards;
+    @FXML private Label currentTurn;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -60,17 +61,37 @@ public class Controller {
             new Media(getClass().getResource("roll4.mp3").toString())
     };
 
-    private byte numOfPlayers;
-
     private byte values[];
-
     private boolean isLocked[] = {false, false, false, false, false, false};
+    private byte numOfPlayers;
+    private Player[] players;
+    private byte turn = 0;
+    private boolean rolledOnce = false;
 
     public void initialize() {
         values = new byte[dices.length];
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         for (byte i = 0; i < dices.length; i++) {
-            dices[i] = new ImageView();
+            switch (i) {
+                case 0:
+                    dices[i] = dice1;
+                    break;
+                case 1:
+                    dices[i] = dice2;
+                    break;
+                case 2:
+                    dices[i] = dice3;
+                    break;
+                case 3:
+                    dices[i] = dice4;
+                    break;
+                case 4:
+                    dices[i] = dice5;
+                    break;
+                case 5:
+                    dices[i] = dice6;
+                    break;
+            }
         }
         for (byte i = 0; i < transitions.length; i++) {
             transitions[i] = new RotateTransition();
@@ -85,7 +106,7 @@ public class Controller {
         });
     }
 
-    public void gameStart() { //todo:
+    public void gameStart() {
         playerInput.setTextFormatter(new TextFormatter<>(getNumericFilter()));
         String enteredValue = playerInput.getText();
         try {
@@ -94,20 +115,24 @@ public class Controller {
                 errorLabel.setText("");
                 startBox.setVisible(false);
                 borderPane.setVisible(true);
-                for (byte i = 1; i <= numOfPlayers; i++) {
+                players = new Player[numOfPlayers];
+                for (byte i = 0; i < numOfPlayers; i++) {
+                    String username = "Player "+ (i + 1);
+                    players[i] = new Player(username);
+
                     Font font = new Font("Arial", 20);
 
-                    Label positon = new Label("#" + i);
+                    Label positon = new Label("#" + (i + 1));
                     positon.setPrefSize(50,50);
                     positon.setAlignment(Pos.CENTER);
                     positon.setFont(font);
                     positon.setTextFill(Color.WHITE);
 
-                    Label name = new Label("Player " + i);
-                    name.setPrefSize(126,50);
-                    name.setAlignment(Pos.CENTER);
-                    name.setFont(font);
-                    name.setTextFill(Color.WHITE);
+                    Label usernameLabel = new Label(username);
+                    usernameLabel.setPrefSize(126,50);
+                    usernameLabel.setAlignment(Pos.CENTER);
+                    usernameLabel.setFont(font);
+                    usernameLabel.setTextFill(Color.WHITE);
 
                     Label scoreText = new Label("score:");
                     scoreText.setPrefSize(100,50);
@@ -115,18 +140,20 @@ public class Controller {
                     scoreText.setFont(font);
                     scoreText.setTextFill(Color.WHITE);
 
-                    Label score = new Label("000");
+                    Label score = new Label(""+players[i].getScore());
                     score.setPrefSize(111,50);
                     score.setAlignment(Pos.CENTER);
                     score.setFont(font);
                     score.setTextFill(Color.WHITE);
 
-                    HBox player = new HBox(positon, name, scoreText, score);
+                    HBox player = new HBox(positon, usernameLabel, scoreText, score);
                     player.setPrefSize(415,50);
 
                     leaderboards.getChildren().add(player);
                 }
                 leaderboardsWrapper.setContent(leaderboards);
+                currentTurn.setText(players[turn].getUsername());
+
             } else {
                 errorLabel.setText("The number is invalid. Set something between 2 - 99");
             }
@@ -146,6 +173,11 @@ public class Controller {
 
     public void roll() {
         byte random = (byte) (Math.round(Math.random() * 3));
+        if (!rolledOnce) {
+            for (byte i=0; i < dices.length; i++) {
+                dices[i].setOnMouseClicked(this::lock);
+            }
+        }
         MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
         mediaPlayer.play();
         for (byte i = 0; i < dices.length; i++) {
@@ -156,58 +188,12 @@ public class Controller {
             transitions[i].setCycleCount((int) (Math.random() * 4 + 1));
             transitions[i].setDuration(Duration.millis(500));
             transitions[i].setAutoReverse(true);
-            ImageView dice = null;
-            switch (i) {
-                case 0:
-                    transitions[i].setNode(dice1);
-                    dice = dice1;
-                    break;
-                case 1:
-                    transitions[i].setNode(dice2);
-                    dice = dice2;
-                    break;
-                case 2:
-                    transitions[i].setNode(dice3);
-                    dice = dice3;
-                    break;
-                case 3:
-                    transitions[i].setNode(dice4);
-                    dice = dice4;
-                    break;
-                case 4:
-                    transitions[i].setNode(dice5);
-                    dice = dice5;
-                    break;
-                case 5:
-                    transitions[i].setNode(dice6);
-                    dice = dice6;
-                    break;
-            }
+            transitions[i].setNode(dices[i]);
             transitions[i].setInterpolator(Interpolator.EASE_OUT);
             transitions[i].play();
-            byte tmp = values[i];
-            ImageView finalDice = dice;
+            byte finalI = i;
             transitions[i].setOnFinished(event -> {
-                switch (tmp) {
-                    case 1:
-                        finalDice.setImage(dicesImg[0]);
-                        break;
-                    case 2:
-                        finalDice.setImage(dicesImg[1]);
-                        break;
-                    case 3:
-                        finalDice.setImage(dicesImg[2]);
-                        break;
-                    case 4:
-                        finalDice.setImage(dicesImg[3]);
-                        break;
-                    case 5:
-                        finalDice.setImage(dicesImg[4]);
-                        break;
-                    case 6:
-                        finalDice.setImage(dicesImg[5]);
-                        break;
-                }
+                dices[finalI].setImage(dicesImg[values[finalI]-1]);
             });
         }
         System.out.print("rolled ");
@@ -227,5 +213,11 @@ public class Controller {
             locks[diceNum].setVisible(true);
             isLocked[diceNum] = true;
         }
+    }
+
+    public void endTurn() {
+        if (turn < numOfPlayers-1) turn++;
+        else turn = 0;
+        currentTurn.setText(players[turn].getUsername());
     }
 }
