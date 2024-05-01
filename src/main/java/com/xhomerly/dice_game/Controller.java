@@ -52,6 +52,7 @@ public class Controller {
     private byte turn = 0;
     private boolean firstRolled = false;
     private String[] scoreLabels;
+    private byte[] currentValueArray;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -75,6 +76,7 @@ public class Controller {
     public void initialize() {
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
+        currentValueArray = new byte[dices.length];
         for (byte i = 0; i < dices.length; i++) {
             switch (i) {
                 case 0:
@@ -255,11 +257,14 @@ public class Controller {
     }
 
     public void countCurrent (byte diceNum) {
-        if (dices[diceNum].getValue() == 1) {
-            currentScore += 100;
-        }
-        else if (dices[diceNum].getValue() == 5) {
-            currentScore += 50;
+        Arrays.sort(currentValueArray);
+        for (byte i = 0; i < currentValueArray.length; i++) {
+            if (currentValueArray[i] == 1) {
+                currentScore += 100;
+            }
+            else if (currentValueArray[i] == 5) {
+                currentScore += 50;
+            }
         }
 
         currentScoreLabel.setText(""+ currentScore);
@@ -274,6 +279,7 @@ public class Controller {
         } else {
             locks[diceNum].setVisible(true);
             dices[diceNum].setLock(true);
+            currentValueArray[diceNum] = dices[diceNum].getValue();
             countCurrent(diceNum);
         }
     }
