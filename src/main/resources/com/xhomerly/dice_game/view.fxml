@@ -68,12 +68,22 @@
                         <Font name="Arial" size="20.0" />
                      </font>
                   </Label>
+                  <Label alignment="CENTER" prefHeight="59.0" prefWidth="128.0" text="potential Score:" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="potentialScoreLabel" prefHeight="59.0" prefWidth="137.0" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
                   <Label alignment="CENTER" prefHeight="59.0" prefWidth="128.0" text="current Score:" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="currentScore" prefHeight="59.0" prefWidth="137.0" textFill="WHITE">
+                  <Label fx:id="currentScoreLabel" prefHeight="59.0" prefWidth="137.0" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>

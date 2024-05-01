@@ -16,7 +16,7 @@ public class Dice {
         return dice;
     }
 
-    public void setValue(byte value) {
+    public void setValue(Byte value) {
         this.value = value;
     }
 

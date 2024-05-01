@@ -4,7 +4,7 @@ package com.xhomerly.dice_game;
 
 public class Player {
 //    private byte position;
-    private int score = 0;
+    private int score;
     private final String username;
 
     public Player(String username) {
@@ -16,8 +16,8 @@ public class Player {
 //        this.position = position;
 //    }
 
-    public void setScore(byte score) {
-        this.score = score;
+    public void setScore(int score) {
+        this.score += score;
     }
 
 //    public byte getPosition() {
