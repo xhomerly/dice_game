@@ -23,6 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
+import java.util.Arrays;
 import java.util.function.UnaryOperator;
 
 public class Controller {
@@ -41,6 +42,7 @@ public class Controller {
     @FXML private ScrollPane leaderboardsWrapper;
     @FXML private VBox leaderboards;
     @FXML private Label currentTurn;
+    @FXML private Label currentScore;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -64,12 +66,13 @@ public class Controller {
     private byte numOfPlayers;
     private Player[] players;
     private byte turn = 0;
-    private boolean rolledOnce = false;
+    private boolean firstRolled = false;
+    private int tmpScore = 0;
 
     public void initialize() {
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
-        for (byte i = 0; i < 6; i++) {
+        for (byte i = 0; i < dices.length; i++) {
             switch (i) {
                 case 0:
                     dices[i] = new Dice(dice1, false);
@@ -170,20 +173,21 @@ public class Controller {
 
     public void roll() {
         byte random = (byte) (Math.round(Math.random() * 3));
-        if (!rolledOnce) {
-            for (byte i=0; i < 6; i++) {
+        if (!firstRolled) {
+            for (byte i=0; i < dices.length; i++) {
                 dices[i].getImageView().setOnMouseClicked(this::lock);
+                firstRolled = true;
             }
         }
         MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
         mediaPlayer.play();
-        for (byte i = 0; i < 6; i++) {
+        for (byte i = 0; i < dices.length; i++) {
             dices[i].setValue((byte) (Math.round(Math.random() * 5) + 1));
             transitions[i] = new RotateTransition();
             transitions[i].setAxis(Rotate.Z_AXIS);
             transitions[i].setByAngle(360);
-            transitions[i].setCycleCount((int) (Math.random() * 4 + 1));
-            transitions[i].setDuration(Duration.millis(500));
+            transitions[i].setCycleCount((byte) (Math.random() * 3 + 1));
+            transitions[i].setDuration(Duration.millis(400));
             transitions[i].setAutoReverse(true);
             transitions[i].setNode(dices[i].getImageView());
             transitions[i].setInterpolator(Interpolator.EASE_OUT);
@@ -193,12 +197,21 @@ public class Controller {
                 dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue()-1]);
             });
         }
-//        vypis hodnot do konzole jen ciste
-        System.out.print("rolled ");
+        count();
+    }
+
+    public void count() {
+        byte[] tmpValues = new byte[dices.length];
+        for (byte i = 0; i < dices.length; i++) tmpValues[i] = dices[i].getValue();
+        Arrays.sort(tmpValues);
+//        vypis ciste
+        System.out.print("sorted ");
         for (byte i = 0; i < dices.length; i++) {
-            System.out.print(dices[i].getValue());
+            System.out.print(tmpValues[i]);
         }
         System.out.println(" ");
+//        zde konci vypis
+
     }
 
     public void lock(MouseEvent event) {
@@ -220,6 +233,10 @@ public class Controller {
         for (byte i=0; i < dices.length; i++) {
             dices[i].setValue((byte) 0);
             dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
+            dices[i].setLock(false);
+            locks[i].setVisible(false);
+            dices[i].getImageView().setOnMouseClicked(null);
+            firstRolled = false;
         }
     }
 }
