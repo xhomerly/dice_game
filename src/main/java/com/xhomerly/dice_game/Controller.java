@@ -28,7 +28,6 @@ import java.util.function.UnaryOperator;
 public class Controller {
     @FXML
     private ImageView dice1, dice2, dice3, dice4, dice5, dice6;
-//    private final ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
     private Dice[] dices;
 
     @FXML
@@ -62,15 +61,12 @@ public class Controller {
             new Media(getClass().getResource("roll4.mp3").toString())
     };
 
-    private byte[] values;
-    private boolean[] isLocked = {false, false, false, false, false, false};
     private byte numOfPlayers;
     private Player[] players;
     private byte turn = 0;
     private boolean rolledOnce = false;
 
     public void initialize() {
-        values = new byte[6];
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
         for (byte i = 0; i < 6; i++) {
@@ -182,7 +178,7 @@ public class Controller {
         MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
         mediaPlayer.play();
         for (byte i = 0; i < 6; i++) {
-            values[i] = (byte) (Math.round(Math.random() * 5) + 1);
+            dices[i].setValue((byte) (Math.round(Math.random() * 5) + 1));
             transitions[i] = new RotateTransition();
             transitions[i].setAxis(Rotate.Z_AXIS);
             transitions[i].setByAngle(360);
@@ -194,13 +190,13 @@ public class Controller {
             transitions[i].play();
             byte finalI = i;
             transitions[i].setOnFinished(event -> {
-                dices[finalI].getImageView().setImage(dicesImg[values[finalI]-1]);
+                dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue()-1]);
             });
         }
 //        vypis hodnot do konzole jen ciste
         System.out.print("rolled ");
-        for (byte i = 0; i < values.length; i++) {
-            System.out.print(values[i]);
+        for (byte i = 0; i < dices.length; i++) {
+            System.out.print(dices[i].getValue());
         }
         System.out.println(" ");
     }
@@ -221,5 +217,9 @@ public class Controller {
         if (turn < numOfPlayers-1) turn++;
         else turn = 0;
         currentTurn.setText(players[turn].getUsername());
+        for (byte i=0; i < dices.length; i++) {
+            dices[i].setValue((byte) 0);
+            dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
+        }
     }
 }
