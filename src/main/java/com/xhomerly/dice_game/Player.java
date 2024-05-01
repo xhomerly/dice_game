@@ -1,5 +1,7 @@
 package com.xhomerly.dice_game;
 
+//todo: positioning implementuju az budu mit hotovy pocitani bodu
+
 public class Player {
 //    private byte position;
     private int score = 0;

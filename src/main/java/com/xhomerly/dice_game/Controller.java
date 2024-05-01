@@ -28,7 +28,8 @@ import java.util.function.UnaryOperator;
 public class Controller {
     @FXML
     private ImageView dice1, dice2, dice3, dice4, dice5, dice6;
-    private final ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
+//    private final ImageView[] dices = {dice1, dice2, dice3, dice4, dice5, dice6};
+    private Dice[] dices;
 
     @FXML
     private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
@@ -61,42 +62,42 @@ public class Controller {
             new Media(getClass().getResource("roll4.mp3").toString())
     };
 
-    private byte values[];
-    private boolean isLocked[] = {false, false, false, false, false, false};
+    private byte[] values;
+    private boolean[] isLocked = {false, false, false, false, false, false};
     private byte numOfPlayers;
     private Player[] players;
     private byte turn = 0;
     private boolean rolledOnce = false;
 
     public void initialize() {
-        values = new byte[dices.length];
+        values = new byte[6];
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
-        for (byte i = 0; i < dices.length; i++) {
+        dices = new Dice[6];
+        for (byte i = 0; i < 6; i++) {
             switch (i) {
                 case 0:
-                    dices[i] = dice1;
+                    dices[i] = new Dice(dice1, false);
                     break;
                 case 1:
-                    dices[i] = dice2;
+                    dices[i] = new Dice(dice2, false);
                     break;
                 case 2:
-                    dices[i] = dice3;
+                    dices[i] = new Dice(dice3, false);
                     break;
                 case 3:
-                    dices[i] = dice4;
+                    dices[i] = new Dice(dice4, false);
                     break;
                 case 4:
-                    dices[i] = dice5;
+                    dices[i] = new Dice(dice5, false);
                     break;
                 case 5:
-                    dices[i] = dice6;
+                    dices[i] = new Dice(dice6, false);
                     break;
             }
         }
         for (byte i = 0; i < transitions.length; i++) {
             transitions[i] = new RotateTransition();
         }
-        //todo:
         System.out.println("Toto je porad jen debug faze, potom pores tohle v initialize");
         startBox.setVisible(true);
         borderPane.setVisible(false);
@@ -174,13 +175,13 @@ public class Controller {
     public void roll() {
         byte random = (byte) (Math.round(Math.random() * 3));
         if (!rolledOnce) {
-            for (byte i=0; i < dices.length; i++) {
-                dices[i].setOnMouseClicked(this::lock);
+            for (byte i=0; i < 6; i++) {
+                dices[i].getImageView().setOnMouseClicked(this::lock);
             }
         }
         MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
         mediaPlayer.play();
-        for (byte i = 0; i < dices.length; i++) {
+        for (byte i = 0; i < 6; i++) {
             values[i] = (byte) (Math.round(Math.random() * 5) + 1);
             transitions[i] = new RotateTransition();
             transitions[i].setAxis(Rotate.Z_AXIS);
@@ -188,14 +189,15 @@ public class Controller {
             transitions[i].setCycleCount((int) (Math.random() * 4 + 1));
             transitions[i].setDuration(Duration.millis(500));
             transitions[i].setAutoReverse(true);
-            transitions[i].setNode(dices[i]);
+            transitions[i].setNode(dices[i].getImageView());
             transitions[i].setInterpolator(Interpolator.EASE_OUT);
             transitions[i].play();
             byte finalI = i;
             transitions[i].setOnFinished(event -> {
-                dices[finalI].setImage(dicesImg[values[finalI]-1]);
+                dices[finalI].getImageView().setImage(dicesImg[values[finalI]-1]);
             });
         }
+//        vypis hodnot do konzole jen ciste
         System.out.print("rolled ");
         for (byte i = 0; i < values.length; i++) {
             System.out.print(values[i]);
@@ -205,13 +207,13 @@ public class Controller {
 
     public void lock(MouseEvent event) {
         Object userData = ((Node) event.getSource()).getUserData();
-        int diceNum = Integer.parseInt((String) userData);
-        if (isLocked[diceNum]) {
+        byte diceNum = Byte.parseByte((String) userData);
+        if (dices[diceNum].isLocked()) {
             locks[diceNum].setVisible(false);
-            isLocked[diceNum] = false;
+            dices[diceNum].setLock(false);
         } else {
             locks[diceNum].setVisible(true);
-            isLocked[diceNum] = true;
+            dices[diceNum].setLock(true);
         }
     }
 
