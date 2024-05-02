@@ -46,7 +46,6 @@ public class Controller {
     @FXML private Label potentialScoreLabel;
 
     private int currentScore = 0;
-    private int potentialScore = 0;
     private byte numOfPlayers;
     private Player[] players;
     private byte turn = 0;
@@ -213,6 +212,8 @@ public class Controller {
     }
 
     public void countPotential() {
+        int potentialScore = 0;
+        potentialScoreLabel.setText(""+ potentialScore);
         byte[] tmpValues = new byte[dices.length];
         for (byte i = 0; i < dices.length; i++) {
             tmpValues[i] = dices[i].getValue();
@@ -254,6 +255,7 @@ public class Controller {
         }
 
         potentialScoreLabel.setText(""+ potentialScore);
+        potentialScore = 0;
     }
 
     public void countCurrent (byte diceNum) {
@@ -291,7 +293,6 @@ public class Controller {
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
         scoreLabel.setText(""+players[turn].getScore());
         currentScore = 0;
-        potentialScore = 0;
         if (turn < numOfPlayers-1) turn++;
         else turn = 0;
         currentTurn.setText(players[turn].getUsername());
