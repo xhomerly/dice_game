@@ -46,12 +46,12 @@ public class Controller {
     @FXML private Label potentialScoreLabel;
 
     private int currentScore = 0;
+    private byte[] currentValueArray;
     private byte numOfPlayers;
     private Player[] players;
     private byte turn = 0;
     private boolean firstRolled = false;
     private String[] scoreLabels;
-    private byte[] currentValueArray;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -214,11 +214,19 @@ public class Controller {
     public void countPotential() {
         int potentialScore = 0;
         potentialScoreLabel.setText(""+ potentialScore);
-        byte[] tmpValues = new byte[dices.length];
-        for (byte i = 0; i < dices.length; i++) {
-            tmpValues[i] = dices[i].getValue();
+        byte[] tmpValues = new byte[8];
+        for (byte i = 0; i < 8; i++) {
+            if (i < dices.length) tmpValues[i] = dices[i].getValue();
+            else tmpValues[i] = 99;
         }
         Arrays.sort(tmpValues);
+//        debug
+//        tmpValues[0] = 2;
+//        tmpValues[1] = 2;
+//        tmpValues[2] = 2;
+//        tmpValues[3] = 3;
+//        tmpValues[4] = 5;
+//        tmpValues[5] = 6;
 //        vypis ciste
         System.out.print("sorted ");
         for (byte i = 0; i < dices.length; i++) {
@@ -227,9 +235,20 @@ public class Controller {
         System.out.println(" ");
 //        zde konci vypis
 
-        if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5]) {
+        if (tmpValues[0] == tmpValues[1] && tmpValues[1] == tmpValues[2] && tmpValues[2] == tmpValues[3] && tmpValues[3] == tmpValues[4] && tmpValues[4] == tmpValues[5]) {
+            if (tmpValues[0] == 1) {
+                System.out.println("Six of ones");
+                potentialScore = 1000 * 2 * 2 * 2;
+            } else {
+                System.out.println("Six of a kind");
+                potentialScore = tmpValues[0] * 100 * 2 * 2 * 2;
+            }
+        }
+
+        else if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5]) {
             potentialScore = 1500;
-            for (byte i = 0; i <tmpValues.length; i++) {
+            System.out.println("Three pairs");
+            for (byte i = 0; i < dices.length; i++) {
                 tmpValues[i] = 0;
                 dices[i].setLock(false);
                 locks[i].setVisible(false);
@@ -237,6 +256,7 @@ public class Controller {
         }
         else if (tmpValues[0] == 1 && tmpValues[1] == 2 && tmpValues[2] == 3 && tmpValues[3] == 4 && tmpValues[4] == 5 && tmpValues[5] == 6) {
             potentialScore = 3000;
+            System.out.println("Straight");
             for (byte i = 0; i <tmpValues.length; i++) {
                 tmpValues[i] = 0;
                 dices[i].setLock(false);
@@ -245,11 +265,51 @@ public class Controller {
         }
         else {
             for (byte i = 0; i < dices.length; i++) {
-                if (dices[i].getValue() == 1 && !dices[i].isLocked()) {
-                    potentialScore += 100;
-                }
-                if (dices[i].getValue() == 5 && !dices[i].isLocked()) {
-                    potentialScore += 50;
+                if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3] && tmpValues[i+3] == tmpValues[i+4] && tmpValues[i+4] == tmpValues[i+5]) {
+                    if (tmpValues[i] == 1) {
+                        System.out.println("Six of ones");
+                        potentialScore += 1000 * 2 * 2 * 2;
+                    } else {
+                        System.out.println("Six of a kind");
+                        potentialScore = tmpValues[i] * 100 * 2 * 2 * 2;
+                    }
+                    break;
+                } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3] && tmpValues[i+3] == tmpValues[i+4]) {
+                    if (tmpValues[i] == 1) {
+                        System.out.println("Five of ones");
+                        potentialScore += 1000 * 2 * 2;
+                    } else {
+                        System.out.println("Five of a kind");
+                        potentialScore = tmpValues[i] * 100 * 2 * 2;
+                    }
+                    break;
+                } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3]) {
+                    if (tmpValues[i] == 1) {
+                        System.out.println("Four of ones");
+                        potentialScore += 1000 * 2;
+                    } else {
+                        System.out.println("Four of a kind");
+                        potentialScore = tmpValues[i] * 100 * 2;
+                    }
+                    break;
+                } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2]) {
+                    if (tmpValues[i] == 1) {
+                        System.out.println("Three of ones");
+                        potentialScore += 1000;
+                    } else {
+                        System.out.println("Three of a kind");
+                        potentialScore += tmpValues[i] * 100;
+                    }
+                    break;
+                } else {
+                    if (tmpValues[i] == 1) {
+                        System.out.println("One");
+                        potentialScore += 100;
+                    }
+                    if (tmpValues[i] == 5) {
+                        System.out.println("Five");
+                        potentialScore += 50;
+                    }
                 }
             }
         }
