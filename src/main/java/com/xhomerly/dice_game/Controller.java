@@ -357,9 +357,17 @@ public class Controller {
         }
         Arrays.sort(tmpValues);
 
-        currentScore = checkScore(tmpValues);
+        int tmpScore = checkScore(tmpValues);
+        currentScoreLabel.setText(""+ tmpScore);
 
-        currentScoreLabel.setText(""+ currentScore);
+        if (tmpScore >= 10000) {
+            System.out.println("Zde funkce na ukonceni hry");
+        } else if (tmpScore >= 400) {
+            currentScore = tmpScore;
+        } else {
+            System.out.println("Skore neni dostatecne");
+//          todo: zde nemuze byt end turn jelikoz si hrac lockne jen jednu hodnotu a uz se toto provede
+        }
     }
 
     public void lock(MouseEvent event) {
