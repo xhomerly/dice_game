@@ -75,7 +75,7 @@ public class Controller {
     public void initialize() {
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
-        currentValueArray = new byte[dices.length];
+        currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
         for (byte i = 0; i < dices.length; i++) {
             switch (i) {
                 case 0:
@@ -205,7 +205,7 @@ public class Controller {
                     dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue()-1]);
                 });
             } else {
-                dices[i].setValue((byte) 99);
+                dices[i].setValue((byte) 9);
             }
         }
         countPotential();
@@ -217,14 +217,14 @@ public class Controller {
         byte[] tmpValues = new byte[10];
         for (byte i = 0; i < 10; i++) {
             if (i < dices.length) tmpValues[i] = dices[i].getValue();
-            else tmpValues[i] = 99;
+            else tmpValues[i] = 9;
         }
         Arrays.sort(tmpValues);
 //        debug
 //        tmpValues[0] = 3;
 //        tmpValues[1] = 3;
-//        tmpValues[2] = 3;
-//        tmpValues[3] = 5;
+//        tmpValues[2] = 4;
+//        tmpValues[3] = 4;
 //        tmpValues[4] = 5;
 //        tmpValues[5] = 5;
 
@@ -236,141 +236,128 @@ public class Controller {
         System.out.println(" ");
 //        zde konci vypis
 
-        if (tmpValues[0] == tmpValues[1] && tmpValues[1] == tmpValues[2] && tmpValues[2] == tmpValues[3] && tmpValues[3] == tmpValues[4] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 99) {
+        potentialScore = checkScore(tmpValues);
+        potentialScoreLabel.setText(""+ potentialScore);
+    }
+
+    public int checkScore(byte[] tmpValues) {
+        int tmpScore = 0;
+
+        if (tmpValues[0] == tmpValues[1] && tmpValues[1] == tmpValues[2] && tmpValues[2] == tmpValues[3] && tmpValues[3] == tmpValues[4] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 9) {
             if (tmpValues[0] == 1) {
                 System.out.println("Six of ones");
-                potentialScore = 1000 * 2 * 2 * 2;
+                tmpScore = 1000 * 2 * 2 * 2;
             } else {
                 System.out.println("Six of a kind");
-                potentialScore = tmpValues[0] * 100 * 2 * 2 * 2;
+                tmpScore = tmpValues[0] * 100 * 2 * 2 * 2;
             }
         }
 
-        else if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 99) {
-            potentialScore = 1500;
+        else if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 9 && tmpValues[0] != tmpValues[2] && tmpValues[2] != tmpValues[4]) {
             System.out.println("Three pairs");
-            for (byte i = 0; i < dices.length; i++) {
-                tmpValues[i] = 0;
-                dices[i].setLock(false);
-                locks[i].setVisible(false);
-            }
+            tmpScore = 1500;
         }
         else if (tmpValues[0] == 1 && tmpValues[1] == 2 && tmpValues[2] == 3 && tmpValues[3] == 4 && tmpValues[4] == 5 && tmpValues[5] == 6) {
-            potentialScore = 3000;
             System.out.println("Straight");
-            for (byte i = 0; i < dices.length; i++) {
-                tmpValues[i] = 0;
-                dices[i].setLock(false);
-                locks[i].setVisible(false);
-            }
+            tmpScore = 3000;
         }
         else {
             for (byte i = 0; i < dices.length; i++) {
                 if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3] && tmpValues[i+3] == tmpValues[i+4]) {
-                    if (tmpValues[i] != 99) {
+                    if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
                             System.out.println("Five of ones");
-                            potentialScore += 1000 * 2 * 2;
+                            tmpScore += 1000 * 2 * 2;
                         } else {
                             System.out.println("Five of a kind");
-                            potentialScore = tmpValues[i] * 100 * 2 * 2;
+                            tmpScore = tmpValues[i] * 100 * 2 * 2;
                         }
                         for (byte y = tmpValues[i]; y < tmpValues.length-tmpValues[i]; y++) {
-                            if (tmpValues[y] == 1 && tmpValues[y] != exc) {
-                                System.out.println("One");
-                                potentialScore += 100;
-                            }
-                            if (tmpValues[y] == 5 && tmpValues[y] != exc) {
-                                System.out.println("Five");
-                                potentialScore += 50;
-                            }
+                            tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
                     break;
                 } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3]) {
-                    if (tmpValues[i] != 99) {
+                    if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
                             System.out.println("Four of ones");
-                            potentialScore += 1000 * 2;
+                            tmpScore += 1000 * 2;
                         } else {
                             System.out.println("Four of a kind");
-                            potentialScore = tmpValues[i] * 100 * 2;
+                            tmpScore = tmpValues[i] * 100 * 2;
                         }
                         for (byte y = tmpValues[i]; y < tmpValues.length-tmpValues[i]; y++) {
-                            if (tmpValues[y] == 1 && tmpValues[y] != exc) {
-                                System.out.println("One");
-                                potentialScore += 100;
-                            }
-                            if (tmpValues[y] == 5 && tmpValues[y] != exc) {
-                                System.out.println("Five");
-                                potentialScore += 50;
-                            }
+                            tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
                     break;
                 } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2]) {
-                    if (tmpValues[i] != 99) {
+                    if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
                             System.out.println("Three of ones");
-                            potentialScore += 1000;
+                            tmpScore += 1000;
                         } else {
                             System.out.println("Three of a kind");
-                            potentialScore += tmpValues[i] * 100;
+                            tmpScore += tmpValues[i] * 100;
                         }
                         for (byte y = tmpValues[i]; y < tmpValues.length-tmpValues[i]; y++) {
                             if (tmpValues[y] == tmpValues[y+1] && tmpValues[y+1] == tmpValues[y+2] && tmpValues[y] != exc) {
-                                if (tmpValues[y] != 99) {
+                                if (tmpValues[y] != 9) {
                                     if (tmpValues[y] == 1) {
                                         System.out.println("Three of ones");
-                                        potentialScore += 1000;
+                                        tmpScore += 1000;
                                     } else {
                                         System.out.println("Three of a kind");
-                                        potentialScore += tmpValues[y] * 100;
+                                        tmpScore += tmpValues[y] * 100;
                                     }
                                 }
                                 break;
                             }
-                            if (tmpValues[y] == 1 && tmpValues[y] != exc) {
-                                System.out.println("One");
-                                potentialScore += 100;
-                            }
-                            if (tmpValues[y] == 5 && tmpValues[y] != exc) {
-                                System.out.println("Five");
-                                potentialScore += 50;
-                            }
+                            tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
                     break;
                 } else {
                     if (tmpValues[i] == 1) {
                         System.out.println("One");
-                        potentialScore += 100;
+                        tmpScore += 100;
                     }
                     if (tmpValues[i] == 5) {
                         System.out.println("Five");
-                        potentialScore += 50;
+                        tmpScore += 50;
                     }
                 }
             }
         }
-
-        potentialScoreLabel.setText(""+ potentialScore);
-        potentialScore = 0;
+        return tmpScore;
     }
 
-    public void countCurrent (byte diceNum) {
-        Arrays.sort(currentValueArray);
-        for (byte i = 0; i < currentValueArray.length; i++) {
-            if (currentValueArray[i] == 1) {
-                currentScore += 100;
-            }
-            else if (currentValueArray[i] == 5) {
-                currentScore += 50;
-            }
+    public int checkOneOrFive(byte tmpValues[], byte y, byte exc) {
+        int tmpScore = 0;
+        if (tmpValues[y] == 1 && tmpValues[y] != exc) {
+            System.out.println("One");
+            tmpScore += 100;
         }
+        if (tmpValues[y] == 5 && tmpValues[y] != exc) {
+            System.out.println("Five");
+            tmpScore += 50;
+        }
+        return tmpScore;
+    }
+
+    public void countCurrent () {
+        currentScoreLabel.setText(""+ currentScore);
+        byte[] tmpValues = new byte[10];
+        for (byte i = 0; i < 10; i++) {
+            if (i < currentValueArray.length) tmpValues[i] = currentValueArray[i];
+            else tmpValues[i] = 9;
+        }
+        Arrays.sort(tmpValues);
+
+        currentScore = checkScore(tmpValues);
 
         currentScoreLabel.setText(""+ currentScore);
     }
@@ -381,11 +368,13 @@ public class Controller {
         if (dices[diceNum].isLocked()) {
             locks[diceNum].setVisible(false);
             dices[diceNum].setLock(false);
+            currentValueArray[diceNum] = 9;
+            countCurrent();
         } else {
             locks[diceNum].setVisible(true);
             dices[diceNum].setLock(true);
             currentValueArray[diceNum] = dices[diceNum].getValue();
-            countCurrent(diceNum);
+            countCurrent();
         }
     }
 
@@ -396,6 +385,7 @@ public class Controller {
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
         scoreLabel.setText(""+players[turn].getScore());
         currentScore = 0;
+        currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
         if (turn < numOfPlayers-1) turn++;
         else turn = 0;
         currentTurn.setText(players[turn].getUsername());
