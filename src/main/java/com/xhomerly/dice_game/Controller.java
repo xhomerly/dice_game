@@ -360,13 +360,10 @@ public class Controller {
         int tmpScore = checkScore(tmpValues);
         currentScoreLabel.setText(""+ tmpScore);
 
-        if (tmpScore >= 10000) {
-            System.out.println("Zde funkce na ukonceni hry");
-        } else if (tmpScore >= 400) {
+        if (tmpScore >= 400) {
             currentScore = tmpScore;
         } else {
             System.out.println("Skore neni dostatecne");
-//          todo: zde nemuze byt end turn jelikoz si hrac lockne jen jednu hodnotu a uz se toto provede
         }
     }
 
@@ -387,23 +384,29 @@ public class Controller {
     }
 
     public void endTurn() {
-        currentScoreLabel.setText("0");
-        potentialScoreLabel.setText("0");
         players[turn].setScore(currentScore);
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
         scoreLabel.setText(""+players[turn].getScore());
+        currentScoreLabel.setText("0");
+        potentialScoreLabel.setText("0");
         currentScore = 0;
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
-        if (turn < numOfPlayers-1) turn++;
-        else turn = 0;
-        currentTurn.setText(players[turn].getUsername());
-        for (byte i=0; i < dices.length; i++) {
-            dices[i].setValue((byte) 0);
-            dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
-            dices[i].setLock(false);
-            locks[i].setVisible(false);
-            dices[i].getImageView().setOnMouseClicked(null);
-            firstRolled = false;
+
+        if (players[turn].getScore() >= 10000) {
+//            todo: make end game
+            System.out.println("End game");
+        } else {
+            if (turn < numOfPlayers-1) turn++;
+            else turn = 0;
+            currentTurn.setText(players[turn].getUsername());
+            for (byte i=0; i < dices.length; i++) {
+                dices[i].setValue((byte) 0);
+                dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
+                dices[i].setLock(false);
+                locks[i].setVisible(false);
+                dices[i].getImageView().setOnMouseClicked(null);
+                firstRolled = false;
+            }
         }
     }
 }
