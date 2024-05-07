@@ -45,8 +45,11 @@ public class Controller {
     @FXML private Label currentScoreLabel;
     @FXML private Label potentialScoreLabel;
 
-    private int currentScore = 0;
+    private int currentScore;
+    private int currentScoreTrans;
     private byte[] currentValueArray;
+    private int potentialScore;
+    private int potentialScoreTrans;
     private byte numOfPlayers;
     private Player[] players;
     private byte turn = 0;
@@ -179,6 +182,8 @@ public class Controller {
     }
 
     public void roll() {
+        potentialScoreTrans = potentialScore;
+        currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
         byte random = (byte) (Math.round(Math.random() * 3));
         if (!firstRolled) {
             for (byte i=0; i < dices.length; i++) {
@@ -206,38 +211,9 @@ public class Controller {
                 });
             } else {
                 dices[i].setValue((byte) 9);
+                dices[i].getImageView().setOnMouseClicked(null);
             }
         }
-        countPotential();
-    }
-
-    public void countPotential() {
-        int potentialScore = 0;
-        potentialScoreLabel.setText(""+ potentialScore);
-        byte[] tmpValues = new byte[10];
-        for (byte i = 0; i < 10; i++) {
-            if (i < dices.length) tmpValues[i] = dices[i].getValue();
-            else tmpValues[i] = 9;
-        }
-        Arrays.sort(tmpValues);
-//        debug
-//        tmpValues[0] = 3;
-//        tmpValues[1] = 3;
-//        tmpValues[2] = 4;
-//        tmpValues[3] = 4;
-//        tmpValues[4] = 5;
-//        tmpValues[5] = 5;
-
-//        vypis ciste
-        System.out.print("sorted ");
-        for (byte i = 0; i < tmpValues.length; i++) {
-            System.out.print(tmpValues[i]+" | ");
-        }
-        System.out.println(" ");
-//        zde konci vypis
-
-        potentialScore = checkScore(tmpValues);
-        potentialScoreLabel.setText(""+ potentialScore);
     }
 
     public int checkScore(byte[] tmpValues) {
@@ -271,9 +247,9 @@ public class Controller {
                             tmpScore += 1000 * 2 * 2;
                         } else {
                             System.out.println("Five of a kind");
-                            tmpScore = tmpValues[i] * 100 * 2 * 2;
+                            tmpScore += tmpValues[i] * 100 * 2 * 2;
                         }
-                        for (byte y = tmpValues[i]; y < tmpValues.length-tmpValues[i]; y++) {
+                        for (byte y = i; y < dices.length-i; y++) {
                             tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
@@ -286,9 +262,9 @@ public class Controller {
                             tmpScore += 1000 * 2;
                         } else {
                             System.out.println("Four of a kind");
-                            tmpScore = tmpValues[i] * 100 * 2;
+                            tmpScore += tmpValues[i] * 100 * 2;
                         }
-                        for (byte y = tmpValues[i]; y < tmpValues.length-tmpValues[i]; y++) {
+                        for (byte y = i; y < dices.length-i; y++) {
                             tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
@@ -303,7 +279,7 @@ public class Controller {
                             System.out.println("Three of a kind");
                             tmpScore += tmpValues[i] * 100;
                         }
-                        for (byte y = tmpValues[i]; y < tmpValues.length-tmpValues[i]; y++) {
+                        for (byte y = i; y < dices.length-i; y++) {
                             if (tmpValues[y] == tmpValues[y+1] && tmpValues[y+1] == tmpValues[y+2] && tmpValues[y] != exc) {
                                 if (tmpValues[y] != 9) {
                                     if (tmpValues[y] == 1) {
@@ -349,7 +325,6 @@ public class Controller {
     }
 
     public void countCurrent () {
-        currentScoreLabel.setText(""+ currentScore);
         byte[] tmpValues = new byte[10];
         for (byte i = 0; i < 10; i++) {
             if (i < currentValueArray.length) tmpValues[i] = currentValueArray[i];
@@ -358,11 +333,17 @@ public class Controller {
         Arrays.sort(tmpValues);
 
         int tmpScore = checkScore(tmpValues);
-        currentScoreLabel.setText(""+ tmpScore);
 
-        if (tmpScore >= 400) {
-            currentScore = tmpScore;
+        potentialScore = tmpScore + potentialScoreTrans;
+        potentialScoreLabel.setText(""+ potentialScore);
+
+        if (potentialScore >= 400) {
+            currentScore = potentialScore + currentScoreTrans; //todo: currentScoreTrans se bude pricitat kdyz se vyresetuje deska a bude hrat stejny hrac
+            currentScoreLabel.setText(""+ currentScore);
         } else {
+            //todo: predelat poradne
+            currentScore = 0;
+            currentScoreLabel.setText(""+ currentScore);
             System.out.println("Skore neni dostatecne");
         }
     }
@@ -390,6 +371,8 @@ public class Controller {
         currentScoreLabel.setText("0");
         potentialScoreLabel.setText("0");
         currentScore = 0;
+        potentialScore = 0;
+        potentialScoreTrans = 0;
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
 
         if (players[turn].getScore() >= 10000) {
