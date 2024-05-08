@@ -23,6 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.UnaryOperator;
 
@@ -64,6 +65,8 @@ public class Controller {
     private byte turn = 0;
     private boolean firstRolled = false;
     private String[] scoreLabels;
+    private ArrayList<Boolean> lockedBefore = new ArrayList<Boolean>();
+    private int numberOfThrows = 0;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -85,6 +88,7 @@ public class Controller {
     };
 
     public void initialize() {
+        lockedBefore.add(0, true);
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
@@ -191,6 +195,12 @@ public class Controller {
     }
 
     public void roll() {
+        numberOfThrows++;
+        if (numberOfThrows != lockedBefore.size()) lockedBefore.add(numberOfThrows-1, false);
+        if (!lockedBefore.get(numberOfThrows-1)) {
+            System.out.println("locknuto nebylo predtim"); //todo: zde neco vymyslet
+        }
+
         potentialScoreTrans = potentialScore;
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
         byte random = (byte) (Math.round(Math.random() * 3));
@@ -204,7 +214,6 @@ public class Controller {
         mediaPlayer.play();
         if (dices[0].isLocked() && dices[1].isLocked() && dices[2].isLocked() && dices[3].isLocked() && dices[4].isLocked() && dices[5].isLocked()) {
             currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
-            currentScoreTrans = currentScore;
             currentScore = 0;
             for (int i = 0; i < dices.length; i++) {
                 dices[i].setLock(false);
@@ -352,7 +361,7 @@ public class Controller {
         potentialScoreLabel.setText("" + potentialScore);
 
         if (potentialScore >= 400) {
-            currentScore = potentialScore + currentScoreTrans; //todo: currentScoreTrans se bude pricitat kdyz se vyresetuje deska a bude hrat stejny hrac
+            currentScore = potentialScore;
             currentScoreLabel.setText("" + currentScore);
         } else {
             //todo: predelat poradne
@@ -371,6 +380,7 @@ public class Controller {
             currentValueArray[diceNum] = 9;
             countCurrent();
         } else {
+            lockedBefore.add(numberOfThrows, true);
             locks[diceNum].setVisible(true);
             dices[diceNum].setLock(true);
             currentValueArray[diceNum] = dices[diceNum].getValue();
@@ -379,6 +389,9 @@ public class Controller {
     }
 
     public void endTurn() {
+        numberOfThrows = 0;
+        lockedBefore.clear();
+        lockedBefore.add(0, true);
         players[turn].setScore(currentScore);
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
         scoreLabel.setText("" + players[turn].getScore());
