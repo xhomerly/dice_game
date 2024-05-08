@@ -36,27 +36,20 @@ public class Controller {
     private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
     private ImageView[] locks = {lock1, lock2, lock3, lock4, lock5, lock6};
 
-    @FXML
-    private TextField playerInput;
-    @FXML
-    private Label errorLabel;
-    @FXML
-    private VBox startBox;
-    @FXML
-    private BorderPane borderPane;
-    @FXML
-    private ScrollPane leaderboardsWrapper;
-    @FXML
-    private VBox leaderboards;
-    @FXML
-    private Label currentTurn;
-    @FXML
-    private Label currentScoreLabel;
-    @FXML
-    private Label potentialScoreLabel;
+    @FXML private TextField playerInput;
+    @FXML private Label errorLabel;
+    @FXML private VBox startBox;
+    @FXML private BorderPane borderPane;
+    @FXML private ScrollPane leaderboardsWrapper;
+    @FXML private VBox leaderboards;
+    @FXML private Label currentTurn;
+    @FXML private Label potentialScoreLabel;
+    @FXML private Label notEnoughLabel;
+    @FXML private VBox endGameBox;
+    @FXML private Label winnerNameLabel;
+    @FXML private Label winnerScoreLabel;
 
     private int currentScore;
-    private int currentScoreTrans;
     private byte[] currentValueArray;
     private int potentialScore;
     private int potentialScoreTrans;
@@ -89,6 +82,7 @@ public class Controller {
 
     public void initialize() {
         lockedBefore.add(0, true);
+        potentialScoreLabel.setText("0");
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
@@ -196,53 +190,51 @@ public class Controller {
 
     public void roll() {
         numberOfThrows++;
-        System.out.println("numOfThrows: "+numberOfThrows);
-        System.out.println("numOfSaved: "+lockedBefore.size());
         if (numberOfThrows != lockedBefore.size()) {
-            lockedBefore.add(numberOfThrows-1, false);
-            System.out.println("nastavilo se false proste");
+            lockedBefore.add(numberOfThrows - 1, false);
         }
-        if (!lockedBefore.get(numberOfThrows-1)) {
-            System.out.println("locknuto nebylo predtim"); //todo: zde neco vymyslet, ukoncit kolo asi
-        } else System.out.println("locknuto bylo");
-
-        potentialScoreTrans = potentialScore;
-        currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
-        byte random = (byte) (Math.round(Math.random() * 3));
-        if (!firstRolled) {
-            for (Dice dice : dices) {
-                dice.getImageView().setOnMouseClicked(this::lock);
-                firstRolled = true;
-            }
-        }
-        MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
-        mediaPlayer.play();
-        if (dices[0].isLocked() && dices[1].isLocked() && dices[2].isLocked() && dices[3].isLocked() && dices[4].isLocked() && dices[5].isLocked()) {
-            currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
+        if (!lockedBefore.get(numberOfThrows - 1)) {
             currentScore = 0;
-            for (int i = 0; i < dices.length; i++) {
-                dices[i].setLock(false);
-                locks[i].setVisible(false);
-                dices[i].getImageView().setOnMouseClicked(this::lock);
+            endTurn();
+        } else {
+            potentialScoreTrans = potentialScore;
+            currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
+            byte random = (byte) (Math.round(Math.random() * 3));
+            if (!firstRolled) {
+                for (Dice dice : dices) {
+                    dice.getImageView().setOnMouseClicked(this::lock);
+                    firstRolled = true;
+                }
             }
-        }
-        for (byte i = 0; i < dices.length; i++) {
-            if (!dices[i].isLocked()) {
-                dices[i].setValue((byte) (Math.round(Math.random() * 5) + 1));
-                transitions[i] = new RotateTransition();
-                transitions[i].setAxis(Rotate.Z_AXIS);
-                transitions[i].setByAngle(360);
-                transitions[i].setCycleCount((byte) (Math.random() * 3 + 1));
-                transitions[i].setDuration(Duration.millis(400));
-                transitions[i].setAutoReverse(true);
-                transitions[i].setNode(dices[i].getImageView());
-                transitions[i].setInterpolator(Interpolator.EASE_OUT);
-                transitions[i].play();
-                byte finalI = i;
-                transitions[i].setOnFinished(event -> dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue() - 1]));
-            } else {
-                dices[i].setValue((byte) 9);
-                dices[i].getImageView().setOnMouseClicked(null);
+            MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
+            mediaPlayer.play();
+            if (dices[0].isLocked() && dices[1].isLocked() && dices[2].isLocked() && dices[3].isLocked() && dices[4].isLocked() && dices[5].isLocked()) {
+                currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
+                currentScore = 0;
+                for (int i = 0; i < dices.length; i++) {
+                    dices[i].setLock(false);
+                    locks[i].setVisible(false);
+                    dices[i].getImageView().setOnMouseClicked(this::lock);
+                }
+            }
+            for (byte i = 0; i < dices.length; i++) {
+                if (!dices[i].isLocked()) {
+                    dices[i].setValue((byte) (Math.round(Math.random() * 5) + 1));
+                    transitions[i] = new RotateTransition();
+                    transitions[i].setAxis(Rotate.Z_AXIS);
+                    transitions[i].setByAngle(360);
+                    transitions[i].setCycleCount((byte) (Math.random() * 3 + 1));
+                    transitions[i].setDuration(Duration.millis(400));
+                    transitions[i].setAutoReverse(true);
+                    transitions[i].setNode(dices[i].getImageView());
+                    transitions[i].setInterpolator(Interpolator.EASE_OUT);
+                    transitions[i].play();
+                    byte finalI = i;
+                    transitions[i].setOnFinished(event -> dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue() - 1]));
+                } else {
+                    dices[i].setValue((byte) 9);
+                    dices[i].getImageView().setOnMouseClicked(null);
+                }
             }
         }
     }
@@ -367,12 +359,10 @@ public class Controller {
 
         if (potentialScore >= 400) {
             currentScore = potentialScore;
-            currentScoreLabel.setText("" + currentScore);
+            notEnoughLabel.setText("");
         } else {
-            //todo: predelat poradne
             currentScore = 0;
-            currentScoreLabel.setText("" + currentScore);
-            System.out.println("Skore neni dostatecne");
+            notEnoughLabel.setText("Not enough score to save");
         }
     }
 
@@ -401,16 +391,18 @@ public class Controller {
         players[turn].setScore(currentScore);
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
         scoreLabel.setText("" + players[turn].getScore());
-        currentScoreLabel.setText("0");
         potentialScoreLabel.setText("0");
+        notEnoughLabel.setText("");
         currentScore = 0;
         potentialScore = 0;
         potentialScoreTrans = 0;
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
 
         if (players[turn].getScore() >= 10000) {
-//            todo: make end game
-            System.out.println("End game");
+            endGameBox.setVisible(true);
+            borderPane.setVisible(false);
+            winnerNameLabel.setText(""+players[turn].getUsername());
+            winnerScoreLabel.setText(""+players[turn].getScore());
         } else {
             if (turn < numOfPlayers - 1) turn++;
             else turn = 0;

@@ -78,12 +78,7 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" prefHeight="59.0" prefWidth="128.0" text="current Score:" textFill="WHITE">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="currentScoreLabel" prefHeight="59.0" prefWidth="137.0" textFill="WHITE">
+                  <Label fx:id="notEnoughLabel" prefHeight="59.0" prefWidth="242.0" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -275,6 +270,49 @@
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
+      </VBox>
+      <VBox fx:id="endGameBox" alignment="TOP_CENTER" fillWidth="false" style="-fx-background-color: #555; -fx-background-radius: 30px;" visible="false">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="255.0" prefWidth="544.0" text="WINNER" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="Arial Bold Italic" size="60.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="100.0" />
+               </VBox.margin>
+            </Label>
+            <Label fx:id="winnerNameLabel" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="79.0" prefWidth="393.0" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="30.0" />
+               </font>
+            </Label>
+            <HBox>
+               <children>
+                  <Label alignment="TOP_RIGHT" contentDisplay="CENTER" prefHeight="79.0" prefWidth="261.0" text="with score:" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Arial" size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="winnerScoreLabel" alignment="TOP_LEFT" contentDisplay="CENTER" prefHeight="79.0" prefWidth="261.0" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font name="Arial" size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <StackPane.margin>
+            <Insets bottom="100.0" left="100.0" right="100.0" top="100.0" />
+         </StackPane.margin>
       </VBox>
    </children>
 </StackPane>
