@@ -35,15 +35,24 @@ public class Controller {
     private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
     private ImageView[] locks = {lock1, lock2, lock3, lock4, lock5, lock6};
 
-    @FXML private TextField playerInput;
-    @FXML private Label errorLabel;
-    @FXML private VBox startBox;
-    @FXML private BorderPane borderPane;
-    @FXML private ScrollPane leaderboardsWrapper;
-    @FXML private VBox leaderboards;
-    @FXML private Label currentTurn;
-    @FXML private Label currentScoreLabel;
-    @FXML private Label potentialScoreLabel;
+    @FXML
+    private TextField playerInput;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private VBox startBox;
+    @FXML
+    private BorderPane borderPane;
+    @FXML
+    private ScrollPane leaderboardsWrapper;
+    @FXML
+    private VBox leaderboards;
+    @FXML
+    private Label currentTurn;
+    @FXML
+    private Label currentScoreLabel;
+    @FXML
+    private Label potentialScoreLabel;
 
     private int currentScore;
     private int currentScoreTrans;
@@ -125,39 +134,39 @@ public class Controller {
                 borderPane.setVisible(true);
                 players = new Player[numOfPlayers];
                 for (byte i = 0; i < numOfPlayers; i++) {
-                    String username = "Player "+ (i + 1);
+                    String username = "Player " + (i + 1);
                     players[i] = new Player(username);
 
                     Font font = new Font("Arial", 20);
 
                     Label positon = new Label("#" + (i + 1));
-                    positon.setPrefSize(50,50);
+                    positon.setPrefSize(50, 50);
                     positon.setAlignment(Pos.CENTER);
                     positon.setFont(font);
                     positon.setTextFill(Color.WHITE);
 
                     Label usernameLabel = new Label(username);
-                    usernameLabel.setPrefSize(126,50);
+                    usernameLabel.setPrefSize(126, 50);
                     usernameLabel.setAlignment(Pos.CENTER);
                     usernameLabel.setFont(font);
                     usernameLabel.setTextFill(Color.WHITE);
 
                     Label scoreText = new Label("score:");
-                    scoreText.setPrefSize(100,50);
+                    scoreText.setPrefSize(100, 50);
                     scoreText.setAlignment(Pos.CENTER_RIGHT);
                     scoreText.setFont(font);
                     scoreText.setTextFill(Color.WHITE);
 
-                    Label score = new Label(""+players[i].getScore());
-                    score.setPrefSize(111,50);
+                    Label score = new Label("" + players[i].getScore());
+                    score.setPrefSize(111, 50);
                     score.setAlignment(Pos.CENTER);
                     score.setFont(font);
                     score.setTextFill(Color.WHITE);
-                    score.setId("scoreLabel"+i);
-                    scoreLabels[i] = "scoreLabel"+i;
+                    score.setId("scoreLabel" + i);
+                    scoreLabels[i] = "scoreLabel" + i;
 
                     HBox player = new HBox(positon, usernameLabel, scoreText, score);
-                    player.setPrefSize(415,50);
+                    player.setPrefSize(415, 50);
 
                     leaderboards.getChildren().add(player);
                 }
@@ -186,13 +195,23 @@ public class Controller {
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
         byte random = (byte) (Math.round(Math.random() * 3));
         if (!firstRolled) {
-            for (byte i=0; i < dices.length; i++) {
-                dices[i].getImageView().setOnMouseClicked(this::lock);
+            for (Dice dice : dices) {
+                dice.getImageView().setOnMouseClicked(this::lock);
                 firstRolled = true;
             }
         }
         MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
         mediaPlayer.play();
+        if (dices[0].isLocked() && dices[1].isLocked() && dices[2].isLocked() && dices[3].isLocked() && dices[4].isLocked() && dices[5].isLocked()) {
+            currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
+            currentScoreTrans = currentScore;
+            currentScore = 0;
+            for (int i = 0; i < dices.length; i++) {
+                dices[i].setLock(false);
+                locks[i].setVisible(false);
+                dices[i].getImageView().setOnMouseClicked(this::lock);
+            }
+        }
         for (byte i = 0; i < dices.length; i++) {
             if (!dices[i].isLocked()) {
                 dices[i].setValue((byte) (Math.round(Math.random() * 5) + 1));
@@ -206,9 +225,7 @@ public class Controller {
                 transitions[i].setInterpolator(Interpolator.EASE_OUT);
                 transitions[i].play();
                 byte finalI = i;
-                transitions[i].setOnFinished(event -> {
-                    dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue()-1]);
-                });
+                transitions[i].setOnFinished(event -> dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue() - 1]));
             } else {
                 dices[i].setValue((byte) 9);
                 dices[i].getImageView().setOnMouseClicked(null);
@@ -227,19 +244,15 @@ public class Controller {
                 System.out.println("Six of a kind");
                 tmpScore = tmpValues[0] * 100 * 2 * 2 * 2;
             }
-        }
-
-        else if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 9 && tmpValues[0] != tmpValues[2] && tmpValues[2] != tmpValues[4]) {
+        } else if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 9 && tmpValues[0] != tmpValues[2] && tmpValues[2] != tmpValues[4]) {
             System.out.println("Three pairs");
             tmpScore = 1500;
-        }
-        else if (tmpValues[0] == 1 && tmpValues[1] == 2 && tmpValues[2] == 3 && tmpValues[3] == 4 && tmpValues[4] == 5 && tmpValues[5] == 6) {
+        } else if (tmpValues[0] == 1 && tmpValues[1] == 2 && tmpValues[2] == 3 && tmpValues[3] == 4 && tmpValues[4] == 5 && tmpValues[5] == 6) {
             System.out.println("Straight");
             tmpScore = 3000;
-        }
-        else {
+        } else {
             for (byte i = 0; i < dices.length; i++) {
-                if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3] && tmpValues[i+3] == tmpValues[i+4]) {
+                if (tmpValues[i] == tmpValues[i + 1] && tmpValues[i + 1] == tmpValues[i + 2] && tmpValues[i + 2] == tmpValues[i + 3] && tmpValues[i + 3] == tmpValues[i + 4]) {
                     if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
@@ -249,12 +262,12 @@ public class Controller {
                             System.out.println("Five of a kind");
                             tmpScore += tmpValues[i] * 100 * 2 * 2;
                         }
-                        for (byte y = i; y < dices.length-i; y++) {
+                        for (byte y = (byte) (i + 5); y < dices.length; y++) {
                             tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
                     break;
-                } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2] && tmpValues[i+2] == tmpValues[i+3]) {
+                } else if (tmpValues[i] == tmpValues[i + 1] && tmpValues[i + 1] == tmpValues[i + 2] && tmpValues[i + 2] == tmpValues[i + 3]) {
                     if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
@@ -264,12 +277,12 @@ public class Controller {
                             System.out.println("Four of a kind");
                             tmpScore += tmpValues[i] * 100 * 2;
                         }
-                        for (byte y = i; y < dices.length-i; y++) {
+                        for (byte y = (byte) (i + 4); y < dices.length; y++) {
                             tmpScore += checkOneOrFive(tmpValues, y, exc);
                         }
                     }
                     break;
-                } else if (tmpValues[i] == tmpValues[i+1] && tmpValues[i+1] == tmpValues[i+2]) {
+                } else if (tmpValues[i] == tmpValues[i + 1] && tmpValues[i + 1] == tmpValues[i + 2]) {
                     if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
@@ -279,8 +292,8 @@ public class Controller {
                             System.out.println("Three of a kind");
                             tmpScore += tmpValues[i] * 100;
                         }
-                        for (byte y = i; y < dices.length-i; y++) {
-                            if (tmpValues[y] == tmpValues[y+1] && tmpValues[y+1] == tmpValues[y+2] && tmpValues[y] != exc) {
+                        for (byte y = (byte) (i + 3); y < dices.length; y++) {
+                            if (tmpValues[y] == tmpValues[y + 1] && tmpValues[y + 1] == tmpValues[y + 2] && tmpValues[y] != exc) {
                                 if (tmpValues[y] != 9) {
                                     if (tmpValues[y] == 1) {
                                         System.out.println("Three of ones");
@@ -311,7 +324,7 @@ public class Controller {
         return tmpScore;
     }
 
-    public int checkOneOrFive(byte tmpValues[], byte y, byte exc) {
+    public int checkOneOrFive(byte[] tmpValues, byte y, byte exc) {
         int tmpScore = 0;
         if (tmpValues[y] == 1 && tmpValues[y] != exc) {
             System.out.println("One");
@@ -321,10 +334,11 @@ public class Controller {
             System.out.println("Five");
             tmpScore += 50;
         }
+
         return tmpScore;
     }
 
-    public void countCurrent () {
+    public void countCurrent() {
         byte[] tmpValues = new byte[10];
         for (byte i = 0; i < 10; i++) {
             if (i < currentValueArray.length) tmpValues[i] = currentValueArray[i];
@@ -335,15 +349,15 @@ public class Controller {
         int tmpScore = checkScore(tmpValues);
 
         potentialScore = tmpScore + potentialScoreTrans;
-        potentialScoreLabel.setText(""+ potentialScore);
+        potentialScoreLabel.setText("" + potentialScore);
 
         if (potentialScore >= 400) {
             currentScore = potentialScore + currentScoreTrans; //todo: currentScoreTrans se bude pricitat kdyz se vyresetuje deska a bude hrat stejny hrac
-            currentScoreLabel.setText(""+ currentScore);
+            currentScoreLabel.setText("" + currentScore);
         } else {
             //todo: predelat poradne
             currentScore = 0;
-            currentScoreLabel.setText(""+ currentScore);
+            currentScoreLabel.setText("" + currentScore);
             System.out.println("Skore neni dostatecne");
         }
     }
@@ -367,7 +381,7 @@ public class Controller {
     public void endTurn() {
         players[turn].setScore(currentScore);
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
-        scoreLabel.setText(""+players[turn].getScore());
+        scoreLabel.setText("" + players[turn].getScore());
         currentScoreLabel.setText("0");
         potentialScoreLabel.setText("0");
         currentScore = 0;
@@ -379,10 +393,10 @@ public class Controller {
 //            todo: make end game
             System.out.println("End game");
         } else {
-            if (turn < numOfPlayers-1) turn++;
+            if (turn < numOfPlayers - 1) turn++;
             else turn = 0;
             currentTurn.setText(players[turn].getUsername());
-            for (byte i=0; i < dices.length; i++) {
+            for (byte i = 0; i < dices.length; i++) {
                 dices[i].setValue((byte) 0);
                 dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
                 dices[i].setLock(false);
