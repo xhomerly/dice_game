@@ -117,7 +117,7 @@ public class Controller {
         for (byte i = 0; i < transitions.length; i++) {
             transitions[i] = new RotateTransition();
         }
-        System.out.println("Toto je porad jen debug faze, potom pores tohle v initialize");
+        System.out.println("Toto je porad jen debug faze, potom pores tohle v initialize"); //todo: nastavit tohle jako default v scene builderu
         startBox.setVisible(true);
         borderPane.setVisible(false);
         //todo: tohle potom smaž až budeš mít nickname settings
@@ -196,10 +196,15 @@ public class Controller {
 
     public void roll() {
         numberOfThrows++;
-        if (numberOfThrows != lockedBefore.size()) lockedBefore.add(numberOfThrows-1, false);
-        if (!lockedBefore.get(numberOfThrows-1)) {
-            System.out.println("locknuto nebylo predtim"); //todo: zde neco vymyslet
+        System.out.println("numOfThrows: "+numberOfThrows);
+        System.out.println("numOfSaved: "+lockedBefore.size());
+        if (numberOfThrows != lockedBefore.size()) {
+            lockedBefore.add(numberOfThrows-1, false);
+            System.out.println("nastavilo se false proste");
         }
+        if (!lockedBefore.get(numberOfThrows-1)) {
+            System.out.println("locknuto nebylo predtim"); //todo: zde neco vymyslet, ukoncit kolo asi
+        } else System.out.println("locknuto bylo");
 
         potentialScoreTrans = potentialScore;
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
@@ -380,7 +385,8 @@ public class Controller {
             currentValueArray[diceNum] = 9;
             countCurrent();
         } else {
-            lockedBefore.add(numberOfThrows, true);
+            if (lockedBefore.size() == numberOfThrows) lockedBefore.add(numberOfThrows, true);
+            else lockedBefore.set(numberOfThrows, true);
             locks[diceNum].setVisible(true);
             dices[diceNum].setLock(true);
             currentValueArray[diceNum] = dices[diceNum].getValue();
