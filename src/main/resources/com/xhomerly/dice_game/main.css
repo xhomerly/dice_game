@@ -1,3 +1,9 @@
 .scroll-pane .viewport {
     -fx-background-color: transparent;
 }
+
+.button {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-padding: 10 20;
+}
