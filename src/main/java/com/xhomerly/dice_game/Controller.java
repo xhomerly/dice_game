@@ -328,7 +328,7 @@ public class Controller {
         return tmpScore;
     }
 
-    public void countCurrent() {
+    public void countCurrent(boolean isLocking) {
         byte[] tmpValues = new byte[10];
         for (byte i = 0; i < 10; i++) {
             if (i < currentValueArray.length) tmpValues[i] = currentValueArray[i];
@@ -337,6 +337,14 @@ public class Controller {
         Arrays.sort(tmpValues);
 
         int tmpScore = checkScore(tmpValues);
+
+        if (isLocking && tmpScore > 0) {
+            if (lockedBefore.size() == numberOfThrows) lockedBefore.add(numberOfThrows, true);
+            else lockedBefore.set(numberOfThrows, true);
+        } else if (!isLocking && tmpScore == 0) {
+            if (lockedBefore.size() == numberOfThrows) lockedBefore.add(numberOfThrows, false);
+            else lockedBefore.set(numberOfThrows, false);
+        }
 
         potentialScore = tmpScore + potentialScoreTrans;
         potentialScoreLabel.setText("" + potentialScore);
@@ -357,18 +365,24 @@ public class Controller {
             locks[diceNum].setVisible(false);
             dices[diceNum].setLock(false);
             currentValueArray[diceNum] = 9;
-            countCurrent();
+            countCurrent(false);
         } else {
-            if (lockedBefore.size() == numberOfThrows) lockedBefore.add(numberOfThrows, true);
-            else lockedBefore.set(numberOfThrows, true);
             locks[diceNum].setVisible(true);
             dices[diceNum].setLock(true);
             currentValueArray[diceNum] = dices[diceNum].getValue();
-            countCurrent();
+            countCurrent(true);
         }
     }
 
     public void endTurn() {
+        numberOfThrows++;
+        if (numberOfThrows != lockedBefore.size()) {
+            lockedBefore.add(numberOfThrows - 1, false);
+        }
+        if (!lockedBefore.get(numberOfThrows-1)) {
+            currentScore = 0;
+        }
+
         numberOfThrows = 0;
         lockedBefore.clear();
         lockedBefore.add(0, true);
