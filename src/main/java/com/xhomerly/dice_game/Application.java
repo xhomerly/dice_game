@@ -14,10 +14,11 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Dice Game");
         stage.getIcons().add(new Image(getClass().getResourceAsStream("dice.png")));
-        stage.setMinWidth(1430);
-        stage.setMinHeight(930);
         stage.setScene(scene);
+        stage.sizeToScene();
         stage.show();
+        stage.setMinWidth(stage.getWidth());
+        stage.setMinHeight(stage.getHeight());
     }
 
     public static void main(String[] args) {
