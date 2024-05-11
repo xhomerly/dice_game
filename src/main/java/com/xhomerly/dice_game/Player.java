@@ -1,14 +1,40 @@
 package com.xhomerly.dice_game;
 
-//todo: positioning implementuju az budu mit hotovy pocitani bodu
-
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 public class Player {
-//    private byte position;
+    private byte position;
     private int score;
     private final String username;
     private HBox playerHBox;
+    private Label positionLabel;
+    private Label scoreLabel;
+
+    public Player(byte position, String username) {
+        this.position = position;
+        this.username = username;
+    }
+
+    public byte getPosition() {
+        return position;
+    }
+
+    public void setPosition(byte position) {
+        this.position = position;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score += score;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     public HBox getPlayerHBox() {
         return playerHBox;
@@ -18,27 +44,16 @@ public class Player {
         this.playerHBox = playerHBox;
     }
 
-    public Player(String username) {
-        this.username = username;
+    public void setPositionLabel(Label positionLabel) {
+        this.positionLabel = positionLabel;
     }
 
-    public void setScore(int score) {
-        this.score += score;
+    public void setScoreLabel(Label scoreLabel) {
+        this.scoreLabel = scoreLabel;
     }
 
-//    public void setPosition(byte position) {
-//        this.position = position;
-//    }
-
-//    public byte getPosition() {
-//        return position;
-//    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public String getUsername() {
-        return username;
+    public void updateLabels() {
+        positionLabel.setText("#"+position);
+        scoreLabel.setText(""+score);
     }
 }

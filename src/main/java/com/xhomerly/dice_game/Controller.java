@@ -22,6 +22,7 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.function.UnaryOperator;
 
 public class Controller {
@@ -48,6 +49,7 @@ public class Controller {
     @FXML private Button endTurnButton;
     @FXML private ScrollPane usernamesWrapper;
     @FXML private VBox usernames;
+    @FXML private Button startButton;
 
     private int currentScore;
     private byte[] currentValueArray;
@@ -57,8 +59,7 @@ public class Controller {
     private Player[] players;
     private byte turn = 0;
     private boolean firstRolled = false;
-    private String[] scoreLabels;
-    private ArrayList<Boolean> lockedBefore = new ArrayList<Boolean>();
+    private ArrayList<Boolean> lockedBefore = new ArrayList<>();
     private int numberOfThrows = 0;
     private TextField[] usernameInputs;
 
@@ -82,7 +83,8 @@ public class Controller {
     };
 
     public void initialize() {
-        lockedBefore.add(0, true);
+        startButton.setDisable(true);
+        lockedBefore.addFirst(true);
         potentialScoreLabel.setText("0");
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
         dices = new Dice[6];
@@ -112,10 +114,6 @@ public class Controller {
         for (byte i = 0; i < transitions.length; i++) {
             transitions[i] = new RotateTransition();
         }
-        System.out.println("Toto je porad jen debug faze, potom pores tohle v initialize"); //todo: nastavit tohle jako default v scene builderu
-        startBox.setVisible(true);
-        borderPane.setVisible(false);
-        //todo: tohle potom smaž až budeš mít nickname settings
         playerInput.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) gameStart();
         });
@@ -130,7 +128,6 @@ public class Controller {
                 usernameInputs = new TextField[numOfPlayers];
                 usernames.getChildren().clear();
                 usernamesWrapper.setContent(usernames);
-                scoreLabels = new String[numOfPlayers];
                 errorLabel.setText("");
                 players = new Player[numOfPlayers];
                 for (byte i = 0; i < numOfPlayers; i++) {
@@ -149,6 +146,7 @@ public class Controller {
                     usernames.getChildren().add(usernameHBox);
                 }
                 usernamesWrapper.setContent(usernames);
+                startButton.setDisable(false);
             } else {
                 errorLabel.setText("The number is invalid. Set something between 2 - 99");
             }
@@ -162,15 +160,16 @@ public class Controller {
             String username;
             if (usernameInputs[i].getText().isBlank()) username = "Player " + (i + 1);
             else username = usernameInputs[i].getText();
-            players[i] = new Player(username);
+            players[i] = new Player((byte) (i+1), username);
 
             Font font = new Font("Arial", 20);
 
-            Label positon = new Label("#" + (i + 1));
-            positon.setPrefSize(60, 50);
-            positon.setAlignment(Pos.CENTER);
-            positon.setFont(font);
-            positon.setTextFill(Color.WHITE);
+            Label position = new Label("#" + players[i].getPosition());
+            position.setPrefSize(60, 50);
+            position.setAlignment(Pos.CENTER);
+            position.setFont(font);
+            position.setTextFill(Color.WHITE);
+            players[i].setPositionLabel(position);
 
             Label usernameLabel = new Label(username);
             usernameLabel.setPrefSize(117, 50);
@@ -189,10 +188,9 @@ public class Controller {
             score.setAlignment(Pos.CENTER);
             score.setFont(font);
             score.setTextFill(Color.WHITE);
-            score.setId("scoreLabel" + i);
-            scoreLabels[i] = "scoreLabel" + i;
+            players[i].setScoreLabel(score);
 
-            HBox player = new HBox(positon, usernameLabel, scoreText, score);
+            HBox player = new HBox(position, usernameLabel, scoreText, score);
             player.setPrefSize(415, 50);
 
             leaderboards.getChildren().add(player);
@@ -411,14 +409,20 @@ public class Controller {
         if (!lockedBefore.get(numberOfThrows-1)) {
             currentScore = 0;
         }
-
         numberOfThrows = 0;
         lockedBefore.clear();
-        lockedBefore.add(0, true);
+        lockedBefore.addFirst(true);
         players[turn].setScore(currentScore);
         players[turn].getPlayerHBox().getStyleClass().remove("activePlayer");
-        Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
-        scoreLabel.setText("" + players[turn].getScore());
+        Arrays.sort(players, Comparator.comparingInt(Player::getScore).reversed());
+        for (byte i = 0; i < players.length; i++) {
+            players[i].setPosition((byte) (i+1));
+        }
+        leaderboards.getChildren().clear();
+        for (Player player : players) {
+            leaderboards.getChildren().add(player.getPlayerHBox());
+            player.updateLabels();
+        }
         potentialScoreLabel.setText("0");
         notEnoughLabel.setText("");
         currentScore = 0;
@@ -429,7 +433,7 @@ public class Controller {
         if (players[turn].getScore() >= 10000) {
             endGameBox.setVisible(true);
             borderPane.setVisible(false);
-            winnerNameLabel.setText(""+players[turn].getUsername());
+            winnerNameLabel.setText(players[turn].getUsername());
             winnerScoreLabel.setText(""+players[turn].getScore());
         } else {
             if (turn < numOfPlayers - 1) turn++;
@@ -462,7 +466,7 @@ public class Controller {
         initialize();
         leaderboards.getChildren().clear();
         lockedBefore.clear();
-        lockedBefore.add(0, true);
+        lockedBefore.addFirst(true);
         players[turn].setScore(currentScore);
         players[turn].getPlayerHBox().getStyleClass().remove("activePlayer");
         potentialScoreLabel.setText("0");
