@@ -5,10 +5,7 @@ import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -48,6 +45,9 @@ public class Controller {
     @FXML private VBox endGameBox;
     @FXML private Label winnerNameLabel;
     @FXML private Label winnerScoreLabel;
+    @FXML private Button endTurnButton;
+    @FXML private ScrollPane usernamesWrapper;
+    @FXML private VBox usernames;
 
     private int currentScore;
     private byte[] currentValueArray;
@@ -60,6 +60,7 @@ public class Controller {
     private String[] scoreLabels;
     private ArrayList<Boolean> lockedBefore = new ArrayList<Boolean>();
     private int numberOfThrows = 0;
+    private TextField[] usernameInputs;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -126,57 +127,83 @@ public class Controller {
         try {
             numOfPlayers = Byte.parseByte(enteredValue);
             if (numOfPlayers >= 2 && numOfPlayers <= 99) {
+                usernameInputs = new TextField[numOfPlayers];
+                usernames.getChildren().clear();
+                usernamesWrapper.setContent(usernames);
                 scoreLabels = new String[numOfPlayers];
                 errorLabel.setText("");
-                startBox.setVisible(false);
-                borderPane.setVisible(true);
                 players = new Player[numOfPlayers];
                 for (byte i = 0; i < numOfPlayers; i++) {
-                    String username = "Player " + (i + 1);
-                    players[i] = new Player(username);
+                    Label usernameLabel = new Label("Player's "+(i+1)+" username:");
+                    usernameLabel.setFont(new Font("Arial", 18));
 
-                    Font font = new Font("Arial", 20);
+                    TextField usernameTextField = new TextField();
+                    usernameTextField.setFont(Font.font("Arial Bold", 18));
+                    usernameInputs[i] = usernameTextField;
 
-                    Label positon = new Label("#" + (i + 1));
-                    positon.setPrefSize(50, 50);
-                    positon.setAlignment(Pos.CENTER);
-                    positon.setFont(font);
-                    positon.setTextFill(Color.WHITE);
+                    HBox usernameHBox = new HBox(10); // Spacing between children
+                    usernameHBox.setAlignment(javafx.geometry.Pos.CENTER);
+                    usernameHBox.setPrefSize(404, 66);
+                    usernameHBox.getChildren().addAll(usernameLabel, usernameTextField);
 
-                    Label usernameLabel = new Label(username);
-                    usernameLabel.setPrefSize(126, 50);
-                    usernameLabel.setAlignment(Pos.CENTER);
-                    usernameLabel.setFont(font);
-                    usernameLabel.setTextFill(Color.WHITE);
-
-                    Label scoreText = new Label("score:");
-                    scoreText.setPrefSize(100, 50);
-                    scoreText.setAlignment(Pos.CENTER_RIGHT);
-                    scoreText.setFont(font);
-                    scoreText.setTextFill(Color.WHITE);
-
-                    Label score = new Label("" + players[i].getScore());
-                    score.setPrefSize(111, 50);
-                    score.setAlignment(Pos.CENTER);
-                    score.setFont(font);
-                    score.setTextFill(Color.WHITE);
-                    score.setId("scoreLabel" + i);
-                    scoreLabels[i] = "scoreLabel" + i;
-
-                    HBox player = new HBox(positon, usernameLabel, scoreText, score);
-                    player.setPrefSize(415, 50);
-
-                    leaderboards.getChildren().add(player);
+                    usernames.getChildren().add(usernameHBox);
                 }
-                leaderboardsWrapper.setContent(leaderboards);
-                currentTurn.setText(players[turn].getUsername());
-
+                usernamesWrapper.setContent(usernames);
             } else {
                 errorLabel.setText("The number is invalid. Set something between 2 - 99");
             }
         } catch (NumberFormatException e) {
             errorLabel.setText("The number is not a valid byte value. Set something between 2 - 99");
         }
+    }
+
+    public void gameStartUsernames() {
+        for (byte i = 0; i < numOfPlayers; i++) {
+            String username;
+            if (usernameInputs[i].getText().isBlank()) username = "Player " + (i + 1);
+            else username = usernameInputs[i].getText();
+            players[i] = new Player(username);
+
+            Font font = new Font("Arial", 20);
+
+            Label positon = new Label("#" + (i + 1));
+            positon.setPrefSize(60, 50);
+            positon.setAlignment(Pos.CENTER);
+            positon.setFont(font);
+            positon.setTextFill(Color.WHITE);
+
+            Label usernameLabel = new Label(username);
+            usernameLabel.setPrefSize(117, 50);
+            usernameLabel.setAlignment(Pos.CENTER_LEFT);
+            usernameLabel.setFont(font);
+            usernameLabel.setTextFill(Color.WHITE);
+
+            Label scoreText = new Label("score:");
+            scoreText.setPrefSize(80, 50);
+            scoreText.setAlignment(Pos.CENTER);
+            scoreText.setFont(font);
+            scoreText.setTextFill(Color.WHITE);
+
+            Label score = new Label("" + players[i].getScore());
+            score.setPrefSize(100, 50);
+            score.setAlignment(Pos.CENTER);
+            score.setFont(font);
+            score.setTextFill(Color.WHITE);
+            score.setId("scoreLabel" + i);
+            scoreLabels[i] = "scoreLabel" + i;
+
+            HBox player = new HBox(positon, usernameLabel, scoreText, score);
+            player.setPrefSize(415, 50);
+
+            leaderboards.getChildren().add(player);
+            players[i].setPlayerHBox(player);
+        }
+        leaderboardsWrapper.setContent(leaderboards);
+        currentTurn.setText(players[turn].getUsername());
+        players[turn].getPlayerHBox().getStyleClass().add("activePlayer");
+        endTurnButton.setDisable(true);
+        startBox.setVisible(false);
+        borderPane.setVisible(true);
     }
 
     private UnaryOperator<TextFormatter.Change> getNumericFilter() {
@@ -189,6 +216,7 @@ public class Controller {
     }
 
     public void roll() {
+        endTurnButton.setDisable(false);
         numberOfThrows++;
         if (numberOfThrows != lockedBefore.size()) {
             lockedBefore.add(numberOfThrows - 1, false);
@@ -375,6 +403,7 @@ public class Controller {
     }
 
     public void endTurn() {
+        endTurnButton.setDisable(true);
         numberOfThrows++;
         if (numberOfThrows != lockedBefore.size()) {
             lockedBefore.add(numberOfThrows - 1, false);
@@ -387,6 +416,7 @@ public class Controller {
         lockedBefore.clear();
         lockedBefore.add(0, true);
         players[turn].setScore(currentScore);
+        players[turn].getPlayerHBox().getStyleClass().remove("activePlayer");
         Label scoreLabel = (Label) leaderboards.lookup("#" + scoreLabels[turn]);
         scoreLabel.setText("" + players[turn].getScore());
         potentialScoreLabel.setText("0");
@@ -404,6 +434,7 @@ public class Controller {
         } else {
             if (turn < numOfPlayers - 1) turn++;
             else turn = 0;
+            players[turn].getPlayerHBox().getStyleClass().add("activePlayer");
             currentTurn.setText(players[turn].getUsername());
             for (byte i = 0; i < dices.length; i++) {
                 dices[i].setValue((byte) 0);
@@ -414,5 +445,32 @@ public class Controller {
                 firstRolled = false;
             }
         }
+    }
+
+    public void playAgain() {
+        turn = 0;
+        for (byte i = 0; i < dices.length; i++) {
+            dices[i].setValue((byte) 0);
+            dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
+            dices[i].setLock(false);
+            locks[i].setVisible(false);
+            dices[i].getImageView().setOnMouseClicked(null);
+            firstRolled = false;
+        }
+        startBox.setVisible(true);
+        borderPane.setVisible(false);
+        initialize();
+        leaderboards.getChildren().clear();
+        lockedBefore.clear();
+        lockedBefore.add(0, true);
+        players[turn].setScore(currentScore);
+        players[turn].getPlayerHBox().getStyleClass().remove("activePlayer");
+        potentialScoreLabel.setText("0");
+        notEnoughLabel.setText("");
+        currentScore = 0;
+        potentialScore = 0;
+        potentialScoreTrans = 0;
+        currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
+        endGameBox.setVisible(false);
     }
 }

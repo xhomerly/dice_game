@@ -5,5 +5,15 @@
 .button {
     -fx-background-color: white;
     -fx-background-radius: 15;
-    -fx-padding: 10 20;
+    /*-fx-padding: 10 20;*/
+    -fx-cursor: hand;
+}
+
+.activePlayer {
+    -fx-background-color: linear-gradient(to right, #A4E8F1, #F4E0EF);
+}
+
+.activePlayer .label {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
 }
