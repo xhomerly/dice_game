@@ -34,7 +34,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <ScrollPane fx:id="leaderboardsWrapper" fitToWidth="true" hbarPolicy="NEVER" maxWidth="415.0" prefHeight="377.0" prefWidth="364.0" style="-fx-background-color: transparent;" stylesheets="@main.css">
+                        <ScrollPane fx:id="leaderboardsWrapper" fitToWidth="true" hbarPolicy="NEVER" maxWidth="415.0" prefHeight="445.0" prefWidth="364.0" style="-fx-background-color: transparent;" stylesheets="@main.css">
                            <content>
                               <VBox fx:id="leaderboards" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                            </content>
@@ -296,9 +296,9 @@
                   </Button>
                </children>
             </HBox>
-            <ScrollPane fx:id="usernamesWrapper" prefHeight="250.0" prefWidth="450.0">
+            <ScrollPane fx:id="usernamesWrapper" hbarPolicy="NEVER" prefHeight="250.0" prefWidth="450.0">
                <content>
-                  <VBox fx:id="usernames" alignment="TOP_CENTER" prefHeight="240.0" prefWidth="448.0" />
+                  <VBox fx:id="usernames" alignment="TOP_CENTER" prefHeight="243.0" prefWidth="448.0" />
                </content>
             </ScrollPane>
             <Button fx:id="startButton" mnemonicParsing="false" onAction="#gameStartUsernames" prefHeight="67.0" prefWidth="156.0" stylesheets="@main.css" text="Start">
