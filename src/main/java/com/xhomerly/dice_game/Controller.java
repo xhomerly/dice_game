@@ -28,41 +28,41 @@ import java.util.function.UnaryOperator;
 public class Controller {
     @FXML
     private ImageView dice1, dice2, dice3, dice4, dice5, dice6;
-    private Dice[] dices;
+    private Dice[] dices; // v inicializaci se vytváří Dice objekty s těmito ImageViews ^
 
     @FXML
     private ImageView lock1, lock2, lock3, lock4, lock5, lock6;
-    private ImageView[] locks = {lock1, lock2, lock3, lock4, lock5, lock6};
+    private ImageView[] locks = {lock1, lock2, lock3, lock4, lock5, lock6}; // pole jednotlivých locků ve scéně
 
-    @FXML private TextField playerInput;
-    @FXML private Label errorLabel;
-    @FXML private VBox startBox;
-    @FXML private BorderPane borderPane;
-    @FXML private ScrollPane leaderboardsWrapper;
-    @FXML private VBox leaderboards;
-    @FXML private Label currentTurn;
-    @FXML private Label potentialScoreLabel;
-    @FXML private Label notEnoughLabel;
-    @FXML private VBox endGameBox;
-    @FXML private Label winnerNameLabel;
-    @FXML private Label winnerScoreLabel;
-    @FXML private Button endTurnButton;
-    @FXML private ScrollPane usernamesWrapper;
-    @FXML private VBox usernames;
-    @FXML private Button startButton;
-    @FXML private Label hintLabel;
+    @FXML private TextField playerInput; // pro input počtu hráčů
+    @FXML private Button startButton; //ten tu mám jen pro setDisable, ať hráč nezačne hru bez nastavení počtu hráčů
+    @FXML private ScrollPane usernamesWrapper; // do tohoto se setne VBox usernames v
+    @FXML private VBox usernames; // do tohoto vkládám textFieldy a Labely pro nastavení přezdívek
+    @FXML private Label hintLabel; // toto jen zobrazuju a schovávám
+    @FXML private Label errorLabel; // toto jen zobrazuju a schovávám
+    @FXML private VBox startBox; // abych to schoval po začátku hry
+    @FXML private BorderPane borderPane; // toto zas zobrazil
+    @FXML private ScrollPane leaderboardsWrapper; // do tohoto se setne VBox leaderboards v
+    @FXML private VBox leaderboards; // semka vkládám HBoxy jednotlivých hráčů
+    @FXML private Label currentTurn; // zde jen nastavuji kdo zrovna hraje, je to ten label vlevo nahoře
+    @FXML private Label potentialScoreLabel; //počítání potenciálního skóre
+    @FXML private Label notEnoughLabel; // toto se zobrazuje jen pokud potenciální skóre nepůjde uložit
+    @FXML private Button endTurnButton; // zde pouzivam jen setDisable, aby hraci nepreskakovali kola bez hozeni kostky
+    @FXML private VBox endGameBox; // toto se zobrazí na konci hry
+    @FXML private Label winnerNameLabel; // zde nastavuji jméno výherce
+    @FXML private Label winnerScoreLabel; // zde nastavuji výherní skóre
 
-    private int currentScore;
-    private byte[] currentValueArray;
-    private int potentialScore;
-    private int potentialScoreTrans;
-    private byte numOfPlayers;
-    private Player[] players;
-    private byte turn = 0;
+    private TextField[] usernameInputs; // jednotlive textFieldy hážu do pole a potom ten obsah getuju z tohoto pole
+    private byte[] currentValueArray; // ulozene hodnoty jsou zde
+    private int potentialScore; // prepocitava se pri kazdem ulozeni/odemknuti
+    private int potentialScoreTrans; // skore ktere se prenasi mezi vyresetovanimi kostek pri jednom tahu
+    private int currentScore; // zde se prirazuje potentialScore a potom se dava objektu player
+    private byte numOfPlayers; // pocet hracu, ktery se prirazuje na zacatku
+    private Player[] players; // pole hracu
+    private byte turn = 0; // pocita index hrace ktery je na rade
     private boolean firstRolled = false;
     private ArrayList<Boolean> lockedBefore = new ArrayList<>();
     private int numberOfThrows = 0;
-    private TextField[] usernameInputs;
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
     private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
@@ -415,16 +415,28 @@ public class Controller {
         numberOfThrows = 0;
         lockedBefore.clear();
         lockedBefore.addFirst(true);
+
         players[turn].setScore(currentScore);
         players[turn].getPlayerHBox().getStyleClass().remove("activePlayer");
-        Arrays.sort(players, Comparator.comparingInt(Player::getScore).reversed());
+        Player tmpPlayers[] = players.clone();
+        Arrays.sort(tmpPlayers, Comparator.comparingInt(Player::getScore).reversed());
         for (byte i = 0; i < players.length; i++) {
-            players[i].setPosition((byte) (i+1));
+            tmpPlayers[i].setPosition((byte) (i+1));
         }
         leaderboards.getChildren().clear();
-        for (Player player : players) {
-            leaderboards.getChildren().add(player.getPlayerHBox());
-            player.updateLabels();
+        for (byte i = 0; i < players.length; i++) {
+            byte position = -1;
+            for (byte y = 0; y < tmpPlayers.length; y++) {
+                if (tmpPlayers[y].getUsername().equals(players[i].getUsername())) {
+                    position = y;
+                    break;
+                }
+            }
+            if (position != -1) {
+                leaderboards.getChildren().add(tmpPlayers[i].getPlayerHBox());
+                players[i].setPosition((byte) (position+1));
+                players[i].updateLabels();
+            }
         }
         potentialScoreLabel.setText("0");
         notEnoughLabel.setText("");
