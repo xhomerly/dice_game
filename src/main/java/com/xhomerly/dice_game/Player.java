@@ -6,9 +6,9 @@ import javafx.scene.layout.HBox;
 public class Player {
     private byte position;
     private int score;
-    private final String username;
-    private HBox playerHBox;
-    private Label positionLabel;
+    private final String username; // konstantni prezdivka nastavena pri startu hry
+    private HBox playerHBox; // HBox v leaderboards
+    private Label positionLabel; // Labely pro nastavovani hodnot; fx:id mi nefungovali
     private Label scoreLabel;
 
     public Player(byte position, String username) {
