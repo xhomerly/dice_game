@@ -60,14 +60,14 @@ public class Controller {
     private byte numOfPlayers; // pocet hracu, ktery se prirazuje na zacatku
     private Player[] players; // pole hracu
     private byte turn = 0; // pocita index hrace ktery je na rade
-    private boolean firstRolled = false;
-    private ArrayList<Boolean> lockedBefore = new ArrayList<>();
-    private int numberOfThrows = 0;
+    private boolean firstRolled = false; // hazel poprve?
+    private ArrayList<Boolean> lockedBefore = new ArrayList<>(); // toto nejak resi logiku jestli kostka byla predtim ulozena a jestli vubec neco bylo ulozeno a tak
+    private int numberOfThrows = 0; // pocty hodu pro porovnavani s lockedBefore.size()
 
     private RotateTransition transition1, transition2, transition3, transition4, transition5, transition6;
-    private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6};
+    private RotateTransition[] transitions = {transition1, transition2, transition3, transition4, transition5, transition6}; // jednotlive transitiony ktere maji random cycleCount
 
-    private final Image[] dicesImg = {
+    private final Image[] dicesImg = { // jednotlive obrazky poctu na kostce
             new Image(getClass().getResourceAsStream("dice1.png")),
             new Image(getClass().getResourceAsStream("dice2.png")),
             new Image(getClass().getResourceAsStream("dice3.png")),
@@ -76,15 +76,15 @@ public class Controller {
             new Image(getClass().getResourceAsStream("dice6.png"))
     };
 
-    private final Media[] rolls = {
+    private final Media[] rolls = { // random zvuky hozeni kostky
             new Media(getClass().getResource("roll1.mp3").toString()),
             new Media(getClass().getResource("roll2.mp3").toString()),
             new Media(getClass().getResource("roll3.mp3").toString()),
             new Media(getClass().getResource("roll4.mp3").toString())
     };
 
+    // funkce ktera se automaticky spusti pri spusteni aplikace; inicializuju zde promenne a pole
     public void initialize() {
-        startButton.setDisable(true);
         lockedBefore.addFirst(true);
         potentialScoreLabel.setText("0");
         locks = new ImageView[]{lock1, lock2, lock3, lock4, lock5, lock6};
@@ -116,14 +116,25 @@ public class Controller {
             transitions[i] = new RotateTransition();
         }
         playerInput.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) gameStart();
+            if (event.getCode() == KeyCode.ENTER) gameStart(); // pokud hrac zada v poli pro pocet hracu enter spusti se gameStart()
         });
     }
 
+    // zarizuje ze do poctu hracu muze uzivatel zadavat jen pouze cisla
+    private UnaryOperator<TextFormatter.Change> getNumericFilter() {
+        return change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d*")) {
+                return change;
+            } else return null;
+        };
+    }
+
+    // spusti se po zadani poctu hracu
     public void gameStart() {
         playerInput.setTextFormatter(new TextFormatter<>(getNumericFilter()));
         String enteredValue = playerInput.getText();
-        try {
+        try { // kontrola jestli zadana hodnota splnuje dane pozadavky
             numOfPlayers = Byte.parseByte(enteredValue);
             if (numOfPlayers >= 2 && numOfPlayers <= 99) {
                 usernameInputs = new TextField[numOfPlayers];
@@ -131,7 +142,7 @@ public class Controller {
                 usernamesWrapper.setContent(usernames);
                 errorLabel.setText("");
                 players = new Player[numOfPlayers];
-                for (byte i = 0; i < numOfPlayers; i++) {
+                for (byte i = 0; i < numOfPlayers; i++) { // vytvareni textFieldu pro zadavani prezdivek pro hrace
                     Label usernameLabel = new Label("Player's "+(i+1)+" username:");
                     usernameLabel.setFont(new Font("Arial", 18));
 
@@ -157,8 +168,9 @@ public class Controller {
         }
     }
 
+    // spusti se po odpinknuti tlacitka start
     public void gameStartUsernames() {
-        for (byte i = 0; i < numOfPlayers; i++) {
+        for (byte i = 0; i < numOfPlayers; i++) { // zde se vytvari hraci do tabulky Leaderboards
             String username;
             if (usernameInputs[i].getText().isBlank()) username = "Player " + (i + 1);
             else username = usernameInputs[i].getText();
@@ -207,22 +219,14 @@ public class Controller {
         hintLabel.setVisible(false);
     }
 
-    private UnaryOperator<TextFormatter.Change> getNumericFilter() {
-        return change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches("\\d*")) {
-                return change;
-            } else return null;
-        };
-    }
-
+    // funkce pro hazeni kostkou
     public void roll() {
         endTurnButton.setDisable(false);
         numberOfThrows++;
-        if (numberOfThrows != lockedBefore.size()) {
+        if (numberOfThrows != lockedBefore.size()) { // pokud nebyla zamknuta zadna hodnota tak se priradi false
             lockedBefore.add(numberOfThrows - 1, false);
         }
-        if (!lockedBefore.get(numberOfThrows - 1)) {
+        if (!lockedBefore.get(numberOfThrows - 1)) { // pokud nebylo nic zamknute tak se provede toto
             currentScore = 0;
             endTurn();
         } else {
@@ -237,10 +241,11 @@ public class Controller {
             byte random = (byte) (Math.round(Math.random() * 3));
             MediaPlayer mediaPlayer = new MediaPlayer(rolls[random]);
             mediaPlayer.play();
+            // pokud byly vsechny kostky ulozeny, tak se maji resetovat
             if (dices[0].isLocked() && dices[1].isLocked() && dices[2].isLocked() && dices[3].isLocked() && dices[4].isLocked() && dices[5].isLocked()) {
-                currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
+                currentValueArray = new byte[]{9, 9, 9, 9, 9, 9};
                 currentScore = 0;
-                for (int i = 0; i < dices.length; i++) {
+                for (byte i = 0; i < dices.length; i++) {
                     dices[i].setLock(false);
                     locks[i].setVisible(false);
                     dices[i].getImageView().setOnMouseClicked(this::lock);
@@ -258,9 +263,9 @@ public class Controller {
                     transitions[i].setNode(dices[i].getImageView());
                     transitions[i].setInterpolator(Interpolator.EASE_OUT);
                     transitions[i].play();
-                    byte finalI = i;
-                    transitions[i].setOnFinished(event -> dices[finalI].getImageView().setImage(dicesImg[dices[finalI].getValue() - 1]));
-                } else {
+                    byte y = i;
+                    transitions[i].setOnFinished(event -> dices[y].getImageView().setImage(dicesImg[dices[y].getValue() - 1]));
+                } else { //pokud hodnota byla ulozena tak se ji nastavi 9 aby se s ni nepocitalo a odstrani se funkce pro lockovani
                     dices[i].setValue((byte) 9);
                     dices[i].getImageView().setOnMouseClicked(null);
                 }
@@ -268,22 +273,27 @@ public class Controller {
         }
     }
 
+    // vraci vypocitane skore
     public int checkScore(byte[] tmpValues) {
         int tmpScore = 0;
 
         if (tmpValues[0] == tmpValues[1] && tmpValues[1] == tmpValues[2] && tmpValues[2] == tmpValues[3] && tmpValues[3] == tmpValues[4] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 9) {
+            // vsech 6 cisel stejnych
             if (tmpValues[0] == 1) {
                 tmpScore = 1000 * 2 * 2 * 2;
             } else {
                 tmpScore = tmpValues[0] * 100 * 2 * 2 * 2;
             }
         } else if (tmpValues[0] == tmpValues[1] && tmpValues[2] == tmpValues[3] && tmpValues[4] == tmpValues[5] && tmpValues[4] != 9 && tmpValues[0] != tmpValues[2] && tmpValues[2] != tmpValues[4]) {
+            // tri dvojice
             tmpScore = 1500;
         } else if (tmpValues[0] == 1 && tmpValues[1] == 2 && tmpValues[2] == 3 && tmpValues[3] == 4 && tmpValues[4] == 5 && tmpValues[5] == 6) {
+            // postupka
             tmpScore = 3000;
         } else {
             for (byte i = 0; i < dices.length; i++) {
                 if (tmpValues[i] == tmpValues[i + 1] && tmpValues[i + 1] == tmpValues[i + 2] && tmpValues[i + 2] == tmpValues[i + 3] && tmpValues[i + 3] == tmpValues[i + 4]) {
+                    // petice
                     if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
@@ -297,6 +307,7 @@ public class Controller {
                     }
                     break;
                 } else if (tmpValues[i] == tmpValues[i + 1] && tmpValues[i + 1] == tmpValues[i + 2] && tmpValues[i + 2] == tmpValues[i + 3]) {
+                    // ctverice
                     if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
@@ -310,6 +321,7 @@ public class Controller {
                     }
                     break;
                 } else if (tmpValues[i] == tmpValues[i + 1] && tmpValues[i + 1] == tmpValues[i + 2]) {
+                    // trojice
                     if (tmpValues[i] != 9) {
                         byte exc = tmpValues[i];
                         if (tmpValues[i] == 1) {
@@ -319,6 +331,7 @@ public class Controller {
                         }
                         for (byte y = (byte) (i + 3); y < dices.length; y++) {
                             if (tmpValues[y] == tmpValues[y + 1] && tmpValues[y + 1] == tmpValues[y + 2] && tmpValues[y] != exc) {
+                                // dalsi mozna trojice
                                 if (tmpValues[y] != 9) {
                                     if (tmpValues[y] == 1) {
                                         tmpScore += 1000;
@@ -345,6 +358,7 @@ public class Controller {
         return tmpScore;
     }
 
+    // kontroluje dodatecne jestli v poli jeste neni 1 nebo 5
     public int checkOneOrFive(byte[] tmpValues, byte y, byte exc) {
         int tmpScore = 0;
         if (tmpValues[y] == 1 && tmpValues[y] != exc) {
@@ -357,7 +371,9 @@ public class Controller {
         return tmpScore;
     }
 
+    // zarizuje logiku pro pocitani
     public void countCurrent(boolean isLocking) {
+        // pocitam s docasnym polem abych zachoval to globalni pole
         byte[] tmpValues = new byte[10];
         for (byte i = 0; i < 10; i++) {
             if (i < currentValueArray.length) tmpValues[i] = currentValueArray[i];
@@ -367,10 +383,10 @@ public class Controller {
 
         int tmpScore = checkScore(tmpValues);
 
-        if (isLocking && tmpScore > 0) {
+        if (isLocking && tmpScore > 0) { // pokud se ulozila kostka a skore se zvysilo, tak se hrac muze dal hazet
             if (lockedBefore.size() == numberOfThrows) lockedBefore.add(numberOfThrows, true);
             else lockedBefore.set(numberOfThrows, true);
-        } else if (!isLocking && tmpScore == 0) {
+        } else if (!isLocking && tmpScore == 0) { // pokud odemkl a skore je na nule, tak nemuze dal hazet
             if (lockedBefore.size() == numberOfThrows) lockedBefore.add(numberOfThrows, false);
             else lockedBefore.set(numberOfThrows, false);
         }
@@ -387,8 +403,9 @@ public class Controller {
         }
     }
 
+    // zamyka/odemyka kostky a prirazuje hodnoty currentValueArray
     public void lock(MouseEvent event) {
-        Object userData = ((Node) event.getSource()).getUserData();
+        Object userData = ((Node) event.getSource()).getUserData(); // ziskava index kostky v poli pomoci userData
         byte diceNum = Byte.parseByte((String) userData);
         if (dices[diceNum].isLocked()) {
             locks[diceNum].setVisible(false);
@@ -403,21 +420,24 @@ public class Controller {
         }
     }
 
+    // funkce pro ukonceni kola
     public void endTurn() {
         endTurnButton.setDisable(true);
         numberOfThrows++;
         if (numberOfThrows != lockedBefore.size()) {
-            lockedBefore.add(numberOfThrows - 1, false);
+            lockedBefore.add(numberOfThrows - 1, false); // pokud nic neulozil tak se nastavi na false
         }
-        if (!lockedBefore.get(numberOfThrows-1)) {
+        if (!lockedBefore.get(numberOfThrows-1)) { // a kdyz je false tak se nepriradi zadne skore
             currentScore = 0;
         }
         numberOfThrows = 0;
         lockedBefore.clear();
-        lockedBefore.addFirst(true);
+        lockedBefore.addFirst(true); // resetovani ArrayListu a numberOfThrows
 
         players[turn].setScore(currentScore);
         players[turn].getPlayerHBox().getStyleClass().remove("activePlayer");
+
+        // tady je logika na razeni hracu v leaderboards
         Player tmpPlayers[] = players.clone();
         Arrays.sort(tmpPlayers, Comparator.comparingInt(Player::getScore).reversed());
         for (byte i = 0; i < players.length; i++) {
@@ -438,6 +458,8 @@ public class Controller {
                 players[i].updateLabels();
             }
         }
+
+        // nutne resety
         potentialScoreLabel.setText("0");
         notEnoughLabel.setText("");
         currentScore = 0;
@@ -445,17 +467,18 @@ public class Controller {
         potentialScoreTrans = 0;
         currentValueArray = new byte[]{9, 9, 9, 9, 9, 9, 9, 9};
 
+        // pokud vyhral hru nekdo s 10 000 body
         if (players[turn].getScore() >= 10000) {
             endGameBox.setVisible(true);
             borderPane.setVisible(false);
             winnerNameLabel.setText(players[turn].getUsername());
             winnerScoreLabel.setText(""+players[turn].getScore());
-        } else {
+        } else { // jinak hraje dalsi hrac
             if (turn < numOfPlayers - 1) turn++;
             else turn = 0;
             players[turn].getPlayerHBox().getStyleClass().add("activePlayer");
             currentTurn.setText(players[turn].getUsername());
-            for (byte i = 0; i < dices.length; i++) {
+            for (byte i = 0; i < dices.length; i++) { // reset kostek
                 dices[i].setValue((byte) 0);
                 dices[i].getImageView().setImage(new Image(getClass().getResourceAsStream("dice0.png")));
                 dices[i].setLock(false);
@@ -466,6 +489,7 @@ public class Controller {
         }
     }
 
+    // funkce pro hrani cele hry znovu, spusti se po dohrani (hrac dosahne vice jak 10 000 bodu)
     public void playAgain() {
         turn = 0;
         for (byte i = 0; i < dices.length; i++) {
