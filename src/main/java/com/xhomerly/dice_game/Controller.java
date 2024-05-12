@@ -50,6 +50,7 @@ public class Controller {
     @FXML private ScrollPane usernamesWrapper;
     @FXML private VBox usernames;
     @FXML private Button startButton;
+    @FXML private Label hintLabel;
 
     private int currentScore;
     private byte[] currentValueArray;
@@ -147,6 +148,7 @@ public class Controller {
                 }
                 usernamesWrapper.setContent(usernames);
                 startButton.setDisable(false);
+                hintLabel.setVisible(true);
             } else {
                 errorLabel.setText("The number is invalid. Set something between 2 - 99");
             }
@@ -202,6 +204,7 @@ public class Controller {
         endTurnButton.setDisable(true);
         startBox.setVisible(false);
         borderPane.setVisible(true);
+        hintLabel.setVisible(false);
     }
 
     private UnaryOperator<TextFormatter.Change> getNumericFilter() {

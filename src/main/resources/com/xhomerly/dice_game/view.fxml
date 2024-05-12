@@ -301,6 +301,11 @@
                   <VBox fx:id="usernames" alignment="TOP_CENTER" prefHeight="243.0" prefWidth="448.0" />
                </content>
             </ScrollPane>
+            <Label fx:id="hintLabel" alignment="CENTER" prefHeight="46.0" prefWidth="374.0" text="Default names are Player 1, Player 2, etc." textFill="#b9b9b9" visible="false">
+               <font>
+                  <Font name="Arial Italic" size="18.0" />
+               </font>
+            </Label>
             <Button fx:id="startButton" mnemonicParsing="false" onAction="#gameStartUsernames" prefHeight="67.0" prefWidth="156.0" stylesheets="@main.css" text="Start">
                <font>
                   <Font name="Arial Bold" size="22.0" />
